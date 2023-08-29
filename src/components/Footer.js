@@ -42,10 +42,10 @@ const Footer = () => {
                 <a href="mailto: hdhien2002@gmail.com"
                   className="mt-4 d-block mb-2 text-white">Email Us</a>
                 <div class="social-icons d-flex align-items-center gap-30">
-                  <a href="" className=''><i class="fa fa-apple" id="apple"></i></a>
-                  <a href="" className=''><i class="fa fa-twitter" id="twitter"></i></a>
-                  <a href="" className=''><i class="fa fa-github-square github" id="github"></i></a>
-                  <a href="" className=''><i class="fa fa-facebook-square" id="facebook"></i></a>
+                  <a href="#"><i class="fa fa-apple" id="apple"></i></a>
+                  <a href="#"><i class="fa fa-twitter" id="twitter"></i></a>
+                  <a href="#"><i class="fa fa-github-square github" id="github"></i></a>
+                  <a href="#"><i class="fa fa-facebook-square" id="facebook"></i></a>
                 </div>
               </div>
             </div>
