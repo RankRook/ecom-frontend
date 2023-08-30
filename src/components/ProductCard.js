@@ -5,7 +5,7 @@ import ReactStars from 'react-stars'
 function ProductCard() {
     return (
         <div className='col-3'>
-            <div className="product-card position-relative">
+            <Link className="product-card position-relative">
                 <div className="wishlist-icon position-absolute">
                     <Link>
                     <img src="images/wish.svg" alt="wishlist" />
@@ -13,7 +13,7 @@ function ProductCard() {
                 </div>
                 <div className="product-image ">
                     <img src="images/watch.jpg" className="img-fluid" alt="product image" />
-                    <img src="images/lakewood-1.png"className="img-fluid"  alt="product image" />
+                    <img src="images/watch.jpg"className="img-fluid"  alt="product image" />
                 </div>
                 <div className="product-details">
                     <h6 className="brand">Havels</h6>
@@ -23,7 +23,7 @@ function ProductCard() {
                     <ReactStars
                         count={5}
                         size={24}
-                        value="3"
+                        value={3}
                         edit={false}
                         activeColor="#ffd700" />
                     <p className="price">$100</p>
@@ -41,7 +41,7 @@ function ProductCard() {
                         </Link>
                     </div>
                 </div>
-            </div>
+            </Link>
         </div>
     )
 }
