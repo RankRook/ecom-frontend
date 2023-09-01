@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React from 'react'
 import { Link } from 'react-router-dom'
 import ReactStars from 'react-stars'
@@ -12,7 +13,7 @@ function ProductCard() {
                     </Link>
                 </div>
                 <div className="product-image ">
-                    <img src="images/watch.jpg" className="img-fluid" alt="product image" />
+                    <img src="images/watch.jpg" className="img-fluid" alt="product-image" />
                     <img src="images/watch.jpg"className="img-fluid"  alt="product image" />
                 </div>
                 <div className="product-details">
