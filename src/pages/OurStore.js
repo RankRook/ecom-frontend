@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-
+import ProductCard from "../components/ProductCard"
 function OurStore() {
+  const [grid, setGrid] = useState(4);
+
   return (
     <>
       <Meta title={"Our Store"} />
@@ -78,19 +80,19 @@ function OurStore() {
                   <div className="d-flex align-items-center gap-10">
                     <div className="form-floating mb-3">
                       <input
-                      type="email"
-                      className="form-control py-1"
-                      id="floatingInput"
-                      placeholder="From"
+                        type="email"
+                        className="form-control py-1"
+                        id="floatingInput"
+                        placeholder="From"
                       />
                       <label for="floatingInput">From</label>
                     </div>
                     <div className="form-floating mb-3">
                       <input
-                      type="email"
-                      className="form-control py-1"
-                      id="floatingInput1"
-                      placeholder="To"
+                        type="email"
+                        className="form-control py-1"
+                        id="floatingInput1"
+                        placeholder="To"
                       />
                       <label for="floatingInput1">To</label>
                     </div>
@@ -101,22 +103,120 @@ function OurStore() {
                 <h3 className="filter-title">Product Tags</h3>
                 <div>
                   <div className="product-tags d-flex flex-wrap align-content-center gap-10">
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Acoustic</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Piano</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Classic</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Ukulele</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Capo</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Acoustic</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Piano</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Classic</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Ukulele</span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">Capo</span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Acoustic
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Piano
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Classic
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Ukulele
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Capo
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Acoustic
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Piano
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Classic
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Ukulele
+                    </span>
+                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
+                      Capo
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
             <div className="col-9">
-              <div className="filter-sort-g"></div>
+              <div className="filter-sort-grid">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center gap-10">
+                    <p className="mb-0 d-block" style={{ width: "100px" }}>
+                      Sort By:
+                    </p>
+                    <select name="" className="form-control form-select" id="">
+                      <option value="manual" selected="selected">
+                        Featured
+                      </option>
+                      <option value="best-selling" selected="selected">
+                        Best Selling
+                      </option>
+                      <option value="title-ascending" selected="selected">
+                        Alphabetically, A-Z
+                      </option>
+                      <option value="title-descending" selected="selected">
+                        Alphabetically, Z-A
+                      </option>
+                      <option value="price-ascending" selected="selected">
+                        Price, Low to High
+                      </option>
+                      <option value="price-decending" selected="selected">
+                        Price, High to Low
+                      </option>
+                      <option value="created-ascending" selected="selected">
+                        Date, old to new
+                      </option>
+                    </select>
+                  </div>
+                  <div className="d-flex align-items-center gap-10">
+                    <p className="total-products mb-0">21 Products</p>
+                    <div className="d-flex gap-10 align-items-center grid">
+                      <img
+                        onClick={() => {
+                          setGrid(3);
+                        }}
+                        src="images/gr.svg"
+                        c
+                        lassName="d-block img-fluid"
+                        a
+                        lt="grid"
+                      />
+                      <img
+                        onClick={() => {
+                          setGrid(4);
+                        }}
+                        src="images/gr3.svg"
+                        className="d-block img-fluid"
+                        alt="grid"
+                      />
+                      <img
+                        onClick={() => {
+                          setGrid(6);
+                        }}
+                        src="images/gr2.svg"
+                        className="d-block img-fluid"
+                        alt="grid"
+                      />
+                      <img
+                        onClick={() => {
+                          setGrid(12);
+                        }}
+                        src="images/gr4.svg"
+                        className="d-block img-fluid"
+                        alt="grid"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="product-list pb-5">
+                <div className="d-flex gap-10 flex-wrap">
+                <ProductCard grid={grid} />
+                <ProductCard grid={grid} />
+                <ProductCard grid={grid} />
+                </div>
+              </div>
+              
             </div>
           </div>
         </div>
