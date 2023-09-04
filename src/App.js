@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import OurStore from "./pages/OurStore";
+import Blog from "./pages/Blog";
+import CompareProduct from "./pages/CompareProduct";
 function App() {
   return (
     <BrowserRouter>
@@ -15,6 +17,8 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="store" element={<OurStore />} />
+          <Route path="blogs" element={<Blog />} />
+          <Route path="compareproduct" element={<CompareProduct />} />
         </Route>
       </Routes>
     </BrowserRouter>
