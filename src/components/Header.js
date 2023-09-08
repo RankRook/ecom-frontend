@@ -63,7 +63,7 @@ const Header = () => {
                                     </Link>
                                 </div>
                                 <div>
-                                    <Link className='d-flex align-items-center gap-10'>
+                                    <Link to ="login"className='d-flex align-items-center gap-10'>
                                         <img src="images\user.svg" alt='user' />
                                         <p className='mb-0'>
                                             Login <br /> MyAccount
@@ -71,7 +71,7 @@ const Header = () => {
                                     </Link>
                                 </div>
                                 <div>
-                                    <Link className='d-flex align-items-center gap-10'>
+                                    <Link to="cart"className='d-flex align-items-center gap-10'>
                                         <img src="images\cart.svg" alt='cart' />
                                         <div className='d-flex flex-column'>
                                             <span className='badge bg-white text-dark'>0</span>
