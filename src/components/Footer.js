@@ -37,7 +37,7 @@ const Footer = () => {
               <h4 className='text-white mb-4'>Contact Us</h4>
               <div >
                 <a className="text-white fs-6">Shop guitar </a>
-                <adress className="text-white py-2 mb-1"><br />Address: 102 Vũ Phạm Hàm</adress>
+                <address className="text-white py-2 mb-1"><br />Address: 102 Vũ Phạm Hàm</address>
                 <a href="tel: +84345532150"
                   className="mt-4 d-block mb-2 text-white">Phone: +84345532150</a>
                 <a href="mailto: hdhien2002@gmail.com"

@@ -5,7 +5,7 @@ import BlogCard from "../components/BlogCard";
 function Blog() {
   return (
     <>
-      <Meta title={"Compare Products"} />
+      <Meta title={"Blogs"} />
       <BreadCrumb title="Blogs" />
       <div className="blog-wrapper home-wrapper-2 py-5">
         <div className="container-xxl">
