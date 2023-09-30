@@ -1,29 +1,56 @@
-import React from 'react'
-import Marquee from 'react-fast-marquee'
-import { Link } from 'react-router-dom'
+/* eslint-disable array-callback-return */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from "react";
+import Marquee from "react-fast-marquee";
+import { Link } from "react-router-dom";
 import Meta from "../components/Meta";
-import BlogCard from '../components/BlogCard'
-import ProductCard from '../components/ProductCard'
-import SpecialProduct from '../components/SpecialProduct'
+import BlogCard from "../components/BlogCard";
+import ProductCard from "../components/ProductCard";
+import SpecialProduct from "../components/SpecialProduct";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllBLogs } from "../features/blogs/blogSlice";
+import { getAllProducts } from "../features/products/productSlice";
 
 const Home = () => {
+
+  const blogState = useSelector((state) => state?.blog?.blog);
+  const productState = useSelector((state) => state.product.product);
+
+  console.log(productState);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getBlogs();
+    getAllProducts()
+  }, []);
+
+  const getBlogs = () => {
+    dispatch(getAllBLogs());
+  };
+
+  const getProducts = () => {
+    dispatch(getAllProducts);
+  };
+
   return (
     <>
-    <Meta title={"Blogs"} />
-      <section className='home-wrapper-1 py-5'>
+      <Meta title={"Blogs"} />
+      <section className="home-wrapper-1 py-5">
         <div className="container-xxl">
           <div className="row">
             <div className="col-6">
               <div className="main-banner position-relative p-3">
                 <img
                   src="images\main-banner-2.jpg"
-                  class='img-fluid rounded-3'
-                  alt="main banner" />
+                  class="img-fluid rounded-3"
+                  alt="main banner"
+                />
                 <div className="main-banner-content position-absolute">
                   <h4>SUPERCHANGED FOR PROS</h4>
                   <h5>Guitars LakeWood</h5>
                   <p></p>
-                  <Link className='button'>BUY NOW</Link>
+                  <Link className="button">BUY NOW</Link>
                 </div>
               </div>
             </div>
@@ -32,8 +59,9 @@ const Home = () => {
                 <div className="small-banner position-relative">
                   <img
                     src="images\catbanner-01.jpg"
-                    className='img-fluid rounded-3'
-                    alt="main banner" />
+                    className="img-fluid rounded-3"
+                    alt="main banner"
+                  />
                   <div className="small-banner-content position-absolute">
                     <h4>SUPERCHANGED FOR PROS</h4>
                     <h5>Guitars LakeWood</h5>
@@ -43,8 +71,9 @@ const Home = () => {
                 <div className="small-banner position-relative">
                   <img
                     src="images\catbanner-02.jpg"
-                    className='img-fluid rounded-3'
-                    alt="main banner" />
+                    className="img-fluid rounded-3"
+                    alt="main banner"
+                  />
                   <div className="small-banner-content position-absolute">
                     <h4>SUPERCHANGED FOR PROS</h4>
                     <h5>Guitars LakeWood</h5>
@@ -54,8 +83,9 @@ const Home = () => {
                 <div className="small-banner position-relative">
                   <img
                     src="images\catbanner-03.jpg"
-                    className='img-fluid rounded-3'
-                    alt="main banner" />
+                    className="img-fluid rounded-3"
+                    alt="main banner"
+                  />
                   <div className="small-banner-content position-absolute">
                     <h4>SUPERCHANGED FOR PROS</h4>
                     <h5>Guitars LakeWood</h5>
@@ -65,8 +95,9 @@ const Home = () => {
                 <div className="small-banner position-relative">
                   <img
                     src="images\catbanner-04.jpg"
-                    className='img-fluid rounded-3'
-                    alt="main banner" />
+                    className="img-fluid rounded-3"
+                    alt="main banner"
+                  />
                   <div className="small-banner-content position-absolute">
                     <h4>SUPERCHANGED FOR PROS</h4>
                     <h5>Guitars LakeWood</h5>
@@ -84,39 +115,39 @@ const Home = () => {
           <div className="row">
             <div className="col-12">
               <div className="services d-flex align-center justify-content-between">
-                <div className='d-flex align-items-center gap-15'>
+                <div className="d-flex align-items-center gap-15">
                   <img src="images/service.png" alt="services" />
                   <div>
                     <h6>Free Shipping</h6>
-                    <p className='mb-0'>From all order over $5</p>
+                    <p className="mb-0">From all order over $5</p>
                   </div>
                 </div>
-                <div className='d-flex align-items-center gap-15'>
+                <div className="d-flex align-items-center gap-15">
                   <img src="images/service-02.png" alt="services" />
                   <div>
                     <h6>Daily Superise Offers</h6>
-                    <p className='mb-0'>Save up to 25%</p>
+                    <p className="mb-0">Save up to 25%</p>
                   </div>
                 </div>
-                <div className='d-flex align-items-center gap-15'>
+                <div className="d-flex align-items-center gap-15">
                   <img src="images/service-03.png" alt="services" />
                   <div>
                     <h6>Support 24/7</h6>
-                    <p className='mb-0'>Shop with an expert</p>
+                    <p className="mb-0">Shop with an expert</p>
                   </div>
                 </div>
-                <div className='d-flex align-items-center gap-15'>
+                <div className="d-flex align-items-center gap-15">
                   <img src="images/service-04.png" alt="services" />
                   <div>
                     <h6>Affordable Prices</h6>
-                    <p className='mb-0'>Get Factory Default Price</p>
+                    <p className="mb-0">Get Factory Default Price</p>
                   </div>
                 </div>
-                <div className='d-flex align-items-center gap-15'>
+                <div className="d-flex align-items-center gap-15">
                   <img src="images/service-05.png" alt="services" />
                   <div>
                     <h6>Secure Payments</h6>
-                    <p className='mb-0'>100% Protected Payment</p>
+                    <p className="mb-0">100% Protected Payment</p>
                   </div>
                 </div>
               </div>
@@ -130,56 +161,56 @@ const Home = () => {
           <div className="row">
             <div className="col-12">
               <div className="categories d-flex flex-wrap justifu-content-between align-items-center">
-                <div className='d-flex align-items-center gap'>
+                <div className="d-flex align-items-center gap">
                   <div>
                     <h6>Cameras</h6>
                     <p>10 Items</p>
                   </div>
                   <img src="images\camera.jpg" alt="camera" />
                 </div>
-                <div className='d-flex align-items-center gap'>
+                <div className="d-flex align-items-center gap">
                   <div>
                     <h6>Smart TV</h6>
                     <p>10 Items</p>
                   </div>
                   <img src="images\tv.jpg" alt="camera" />
                 </div>
-                <div className='d-flex align-items-center gap'>
+                <div className="d-flex align-items-center gap">
                   <div>
                     <h6>Smart Watches</h6>
                     <p>10 Items</p>
                   </div>
                   <img src="images\tv.jpg" alt="camera" />
                 </div>
-                <div className='d-flex align-items-center gap'>
+                <div className="d-flex align-items-center gap">
                   <div>
                     <h6>Cameras</h6>
                     <p>10 Items</p>
                   </div>
                   <img src="images\camera.jpg" alt="camera" />
                 </div>
-                <div className='d-flex align-items-center gap'>
+                <div className="d-flex align-items-center gap">
                   <div>
                     <h6>Cameras</h6>
                     <p>10 Items</p>
                   </div>
                   <img src="images\camera.jpg" alt="camera" />
                 </div>
-                <div className='d-flex align-items-center gap'>
+                <div className="d-flex align-items-center gap">
                   <div>
                     <h6>Smart TV</h6>
                     <p>10 Items</p>
                   </div>
                   <img src="images\tv.jpg" alt="camera" />
                 </div>
-                <div className='d-flex align-items-center gap'>
+                <div className="d-flex align-items-center gap">
                   <div>
                     <h6>Smart Watches</h6>
                     <p>10 Items</p>
                   </div>
                   <img src="images\tv.jpg" alt="camera" />
                 </div>
-                <div className='d-flex align-items-center gap'>
+                <div className="d-flex align-items-center gap">
                   <div>
                     <h6>Cameras</h6>
                     <p>10 Items</p>
@@ -214,10 +245,22 @@ const Home = () => {
             </div>
           </div>
           <div className="row ">
-            <SpecialProduct/>
-            <SpecialProduct/>
-            <SpecialProduct/>
-            <SpecialProduct/>
+          <SpecialProduct/>
+          <SpecialProduct/>
+          <SpecialProduct/>
+          <SpecialProduct/>
+            {/* {productState &&
+              productState?.map((item, index) => {
+
+                  
+                    <SpecialProduct
+                      key={index}
+                      brand={item?.brand}
+                      title={item?.title}
+                      totalrating={item?.totalrating.toString()}
+                    />
+                 
+              })} */}
           </div>
         </div>
       </section>
@@ -236,35 +279,34 @@ const Home = () => {
         </div>
       </section>
 
-
       <section className="marquee-wrapper py-5">
         <div className="container">
           <div className="row">
             <div className="col-12">
               <div className="marquee-inner-wrapper bg-white p-3 card-wrapper">
-                <Marquee className='d-flex'>
-                  <div className='mx-4 w-25'>
+                <Marquee className="d-flex">
+                  <div className="mx-4 w-25">
                     <img src="images/taylor-1.png" alt="brand" />
                   </div>
-                  <div className='mx-4 w-25'>
+                  <div className="mx-4 w-25">
                     <img src="images/lakewood-1.png" alt="brand" />
                   </div>
-                  <div className='mx-4 w-25'>
+                  <div className="mx-4 w-25">
                     <img src="images/brand-03.png" alt="brand" />
                   </div>
-                  <div className='mx-4 w-25'>
+                  <div className="mx-4 w-25">
                     <img src="images/brand-04.png" alt="brand" />
                   </div>
-                  <div className='mx-4 w-25'>
+                  <div className="mx-4 w-25">
                     <img src="images/brand-05.png" alt="brand" />
                   </div>
-                  <div className='mx-4 w-25'>
+                  <div className="mx-4 w-25">
                     <img src="images/brand-06.png" alt="brand" />
                   </div>
-                  <div className='mx-4 w-25'>
+                  <div className="mx-4 w-25">
                     <img src="images/brand-07.png" alt="brand" />
                   </div>
-                  <div className='mx-4 w-25'>
+                  <div className="mx-4 w-25">
                     <img src="images/brand-08.png" alt="brand" />
                   </div>
                 </Marquee>
@@ -282,23 +324,27 @@ const Home = () => {
             </div>
           </div>
           <div className="row">
-            <div className="col-3">
-              <BlogCard/>
-            </div>
-            <div className="col-3">
-              <BlogCard/>
-            </div>
-            <div className="col-3">
-              <BlogCard/>
-            </div>
-            <div className="col-3">
-              <BlogCard/>
-            </div>
+            {blogState &&
+              // eslint-disable-next-line array-callback-return
+              blogState.map((item, index) => {
+                if (index < 4) {
+                  return (
+                    <div className="col-3 " key={index}>
+                      <BlogCard
+                        id={item?._id}
+                        title={item?.title}
+                        description={item?.description}
+                        image={item?.images[0]?.url}
+                      />
+                    </div>
+                  );
+                }
+              })}
           </div>
         </div>
       </section>
     </>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

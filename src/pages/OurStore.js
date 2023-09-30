@@ -8,9 +8,10 @@ import ProductCard from "../components/ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../features/products/productSlice";
 
-function OurStore() {
+
+const OurStore = () => {
   const [grid, setGrid] = useState(4);
-  const productState = useSelector((state)=> state.product.product)
+  const productState = useSelector((state)=> state?.product?.product)
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -236,4 +237,5 @@ function OurStore() {
   );
 }
 
-export default OurStore;
+export default OurStore
+

@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ReactStars from 'react-stars'
 
-function SpecialProduct() {
+const SpecialProduct = () => {
     return (
         <div className='col-6 mb-3'>
             <div className="special-product-card">

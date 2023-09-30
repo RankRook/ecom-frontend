@@ -3,7 +3,9 @@ import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
 import { Link } from "react-router-dom";
 
-function Forgotpassword() {
+
+const Forgotpassword = () => {
+
   return (
     <>
       <Meta title={"Forgot Password"} />

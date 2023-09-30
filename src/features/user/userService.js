@@ -1,22 +1,29 @@
 import axios from "axios"
-import {base_url} from "../../utils/data_url"
-import {config} from "../../utils/axiosConfig"
+import {base_url, config} from "../../utils/axiosConfig"
 
 const register = async(userData)=>{
-    const respone = await axios.post(`${base_url}user/register`,userData)
-    if(respone.data){
-        return respone.data;
+    const response = await axios.post(`${base_url}user/register`,userData)
+    if(response.data){
+        localStorage.setItem("customer", JSON.stringify(response.data));
     }
 }
 
 const login = async(userData) =>{
-    const respone = await axios.post(`${base_url}user/login`, userData, config)
-    if(respone.data){
-        return respone.data
+    const response = await axios.post(`${base_url}user/login`, userData, config)
+    if(response.data){
+        return response.data
+    }
+}
+
+const getUserWishList = async () =>{
+    const response = await axios.get(`${base_url}user/wishlist`, config);
+    if(response.data){
+        return response.data;
     }
 }
 
 export const authService ={
     register,
-    login
+    login,
+    getUserWishList
 }

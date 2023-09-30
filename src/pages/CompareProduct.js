@@ -2,7 +2,7 @@ import React from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
 
-function CompareProduct() {
+const CompareProduct = () => {
   return (
     <>
       <Meta title={"Compare Products"} />

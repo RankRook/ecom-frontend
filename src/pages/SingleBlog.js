@@ -1,14 +1,29 @@
-import React from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { HiOutlineArrowLeft } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import { getBlog } from "../features/blogs/blogSlice";
 
-function SingleBlog() {
+const SingleBlog = () => {
+
+  const blogState = useSelector((state) => state?.blog?.singleBlog);
+  const location = useLocation();
+  console.log(location);
+  const getBlogId = location.pathname.split("/")[2];
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getABlog();
+  }, []);
+  const getABlog = () => {
+    dispatch(getBlog(getBlogId));
+  };
   return (
     <>
-      <Meta title={"Dynamic Blog Name"} />
-      <BreadCrumb title="Dynamic Blog Name" />
+      <Meta title={blogState?.title} />
+      <BreadCrumb title={blogState?.title} />
       <div className="blog-wrapper home-wrapper-2 py-5">
         <div className="container-xxl">
           <div className="row">
@@ -17,20 +32,20 @@ function SingleBlog() {
                 <Link to="/blogs" className="d-flex align-items-center gap-10">
                   <HiOutlineArrowLeft className="fs-4" /> Go back to Blogs
                 </Link>
-                <h3 className="title">
-                  A Beautiful Sunday Morning Renaissance
-                </h3>
+                <h3 className="title">{blogState?.title}</h3>
                 <img
-                  src="images/blog-1.jpg"
+                  src={
+                    blogState?.images[0]?.url ? blogState?.images?.[0] :"blog"
+                  }
                   alt="blog"
                   className="img-fluid w-100 my-4"
                 />
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor
-                  quisquam ut ducimus. Hic nulla impedit possimus, quas,
-                  exercitationem ipsum esse reiciendis rem saepe veniam
-                  repellendus eaque minima adipisci aspernatur consequuntur.
-                </p>
+                <p
+                  className="desc"
+                  dangerouslySetInnerHTML={{
+                    __html: blogState?.description,
+                  }}
+                ></p>
               </div>
             </div>
           </div>
