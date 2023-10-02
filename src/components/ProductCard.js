@@ -39,22 +39,25 @@ const ProductCard = (props) => {
                     <img src="images/wish.svg" alt="wishlist" />
                   </button>
                 </div>
-                <div className="product-image ">
-                  <img
-                    width=" 200"
-                    height=" 200"
-                    src={item?.images?.[0]?.url}
-                    className="img-fluid"
-                    alt="product-image"
-                  />
-                  <img
-                    width=" 200"
-                    height=" 200"
-                    src={item?.images?.[1]?.url}
-                    className="img-fluid"
-                    alt="product image"
-                  />
+                <div className="container">
+                  <div className="product-image ">
+                    <img
+                      width="400"
+                      height=" 400"
+                      src={item?.images?.[0]?.url}
+                      className="img-fluid"
+                      alt="product-image"
+                    />
+                    <img
+                      width=" 400"
+                      height=" 400"
+                      src={item?.images?.[1]?.url}
+                      className="img-fluid"
+                      alt="product image"
+                    />
+                  </div>
                 </div>
+
                 <div className="product-details">
                   <h6 className="brand">{item?.brand}</h6>
                   <h5 className="product-title">{item?.title}</h5>

@@ -348,12 +348,13 @@ a {
 
 /*Product Part*/
 .product-card {
-  padding: 15px;
+  padding: 26px;
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
   width: 100%;
 }
+
 
 .product-card p.description {
   font-size: 13px;
@@ -362,9 +363,10 @@ a {
 }
 
 .product-card .product-image {
-  height: 100px;
-  /* padding: 8px; */
-  height: 100%;
+  padding: 10px;
+  max-width: 100%; /* Đảm bảo ảnh không vượt quá kích thước của phần tử cha */
+  max-height: 100%; /* Đảm bảo ảnh không vượt quá kích thước của phần tử cha */
+  height: auto;
 }
 
 .product-card .product-image img {
