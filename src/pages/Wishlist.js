@@ -14,7 +14,7 @@ const Wishlist = () => {
     getProducts();
   }, []);
 
-  const wishlistState = useSelector((state)=> state.auth.wishlist)
+  const wishlistState = useSelector((state)=> state?.auth?.wishlist?.wishlist)
 
   console.log(wishlistState)
 
@@ -28,7 +28,7 @@ const Wishlist = () => {
       <div className="compare-wishlist-wrapper py-2 home-wrapper-2">
         <div className="container-xxl">
           <div className="row ">
-            {wishlistState?.map((item, index) => {
+            {wishlistState && wishlistState?.map((item, index) => {
               return (
                 <div className="col-3 mb-3">
                   <div className="wishlist-card position-relative">

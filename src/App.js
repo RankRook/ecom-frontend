@@ -14,6 +14,8 @@ import Forgotpassword from "./pages/Forgotpassword";
 import Signup from "./pages/Signup"
 import SingleBlog from "./pages/SingleBlog";
 import SingleProduct from "./pages/SingleProduct";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 function App() {
   return (
     <BrowserRouter>
@@ -31,7 +33,8 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="forgot-password" element={<Forgotpassword />} />
           <Route path="signup" element={<Signup />} />
-          
+          <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
         </Route>
       </Routes>
     </BrowserRouter>

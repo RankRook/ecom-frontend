@@ -7,7 +7,7 @@ const BlogCard = (props) => {
     <div className="blog-card">
       <div className="card-image">
         <img
-          src={image ? image : "images/blog-1.jpg"}
+          src={image?.[0]?.url }
           className="img-fluid w-100"
           alt="blog"
         />

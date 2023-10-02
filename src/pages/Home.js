@@ -1,28 +1,30 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable array-callback-return */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Meta from "../components/Meta";
 import BlogCard from "../components/BlogCard";
 import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
+import ReactStars from "react-stars";
+import { addToWishlist } from "../features/products/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBLogs } from "../features/blogs/blogSlice";
 import { getAllProducts } from "../features/products/productSlice";
 
 const Home = () => {
-
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state.product.product);
-
+  const navigate = useNavigate();
   console.log(productState);
   const dispatch = useDispatch();
 
   useEffect(() => {
     getBlogs();
-    getAllProducts()
+    getProducts();
   }, []);
 
   const getBlogs = () => {
@@ -30,7 +32,13 @@ const Home = () => {
   };
 
   const getProducts = () => {
-    dispatch(getAllProducts);
+    dispatch(getAllProducts());
+  };
+
+  let location = useLocation();
+
+  const addToWish = (id) => {
+    dispatch(addToWishlist(id));
   };
 
   return (
@@ -226,13 +234,75 @@ const Home = () => {
       <section className="featured-wrapper py-5 home-wrapper-2">
         <div className="container-xxl">
           <div className="row ">
-            <div className="col-12">
-              <h3 className="section-heading">Featured Collections</h3>
-            </div>
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            {productState &&
+              productState?.map((item, index) => {
+                if (index < 4) {
+                  if (item.tags === "featured") {
+                    return (
+                      <div key={index} className={`${"col-3"}`}>
+                        <Link className="product-card position-relative">
+                          <div className="wishlist-icon position-absolute">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={(e) => {
+                                addToWish(item?._id);
+                              }}
+                            >
+                              <img src="images/wish.svg" alt="wishlist" />
+                            </button>
+                          </div>
+                          <div className="product-image ">
+                            <img
+                              src={item?.images?.[0]?.url}
+                              className="img-fluid"
+                              alt="product-image"
+                            />
+                            <img
+                              src={item?.images?.[1]?.url}
+                              className="img-fluid"
+                              alt="product image"
+                            />
+                          </div>
+                          <div className="product-details">
+                            <h6 className="brand">{item?.brand}</h6>
+                            <h5 className="product-title">{item?.title}</h5>
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={item?.totalRating?.toString()}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                            <p className="price">$ {item?.price}</p>
+                          </div>
+                          <div className="action-bar position-absolute">
+                            <div className="d-flex flex-column gap-15">
+                              <Link>
+                                <img
+                                  src="images/prodcompare.svg"
+                                  alt="compare"
+                                />
+                              </Link>
+                              <Link>
+                                <img
+                                  onClick={() =>
+                                    navigate("/product/" + item?._id)
+                                  }
+                                  src="images/view.svg"
+                                  alt="view"
+                                />
+                              </Link>
+                              <Link>
+                                <img src="images/add-cart.svg" alt="add cart" />
+                              </Link>
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    );
+                  }
+                }
+              })}
           </div>
         </div>
       </section>
@@ -245,22 +315,24 @@ const Home = () => {
             </div>
           </div>
           <div className="row ">
-          <SpecialProduct/>
-          <SpecialProduct/>
-          <SpecialProduct/>
-          <SpecialProduct/>
-            {/* {productState &&
+            {productState &&
               productState?.map((item, index) => {
-
-                  
-                    <SpecialProduct
-                      key={index}
-                      brand={item?.brand}
-                      title={item?.title}
-                      totalrating={item?.totalrating.toString()}
-                    />
-                 
-              })} */}
+                if (index < 4) {
+                  if (item.tags === "special") {
+                    return (
+                      <SpecialProduct
+                        key={index}
+                        id={item?._id}
+                        brand={item?.brand}
+                        title={item?.title}
+                        quantity={item?.quantity}
+                        price={item?.price}
+                        totalrating={item?.totalrating.toString()}
+                      />
+                    );
+                  }
+                }
+              })}
           </div>
         </div>
       </section>
@@ -271,10 +343,77 @@ const Home = () => {
             <div className="col-12">
               <h3 className="section-heading">Our Popular Products</h3>
             </div>
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            <div className="row ">
+              {productState &&
+                productState?.map((item, index) => {
+                  if (index < 4) {
+                    // if (item.tags === "popular") {
+                    return (
+                      <div key={index} className={`${"col-3"}`}>
+                        <Link className="product-card position-relative">
+                          <div className="wishlist-icon position-absolute">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={(e) => {
+                                addToWish(item?._id);
+                              }}
+                            >
+                              <img src="images/wish.svg" alt="wishlist" />
+                            </button>
+                          </div>
+                          <div className="product-image ">
+                            <img
+                              src={item?.images?.[0]?.url}
+                              className="img-fluid"
+                              alt="product-image"
+                            />
+                            <img
+                              src={item?.images?.[1]?.url}
+                              className="img-fluid"
+                              alt="product image"
+                            />
+                          </div>
+                          <div className="product-details">
+                            <h6 className="brand">{item?.brand}</h6>
+                            <h5 className="product-title">{item?.title}</h5>
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={item?.totalRating?.toString()}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                            <p className="price">$ {item?.price}</p>
+                          </div>
+                          <div className="action-bar position-absolute">
+                            <div className="d-flex flex-column gap-15">
+                              <Link>
+                                <img
+                                  src="images/prodcompare.svg"
+                                  alt="compare"
+                                />
+                              </Link>
+                              <Link>
+                                <img
+                                  onClick={() =>
+                                    navigate("/product/" + item?._id)
+                                  }
+                                  src="images/view.svg"
+                                  alt="view"
+                                />
+                              </Link>
+                              <Link>
+                                <img src="images/add-cart.svg" alt="add cart" />
+                              </Link>
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    );
+                    // }
+                  }
+                })}
+            </div>
           </div>
         </div>
       </section>

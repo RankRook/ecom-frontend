@@ -7,7 +7,6 @@ import { addToWishlist } from "../features/products/productSlice";
 
 const ProductCard = (props) => {
   const { grid, data } = props;
-  console.log(data)
   const dispatch = useDispatch();
   let location = useLocation();
 
@@ -42,11 +41,15 @@ const ProductCard = (props) => {
                 </div>
                 <div className="product-image ">
                   <img
+                    width=" 200"
+                    height=" 200"
                     src={item?.images?.[0]?.url}
                     className="img-fluid"
                     alt="product-image"
                   />
                   <img
+                    width=" 200"
+                    height=" 200"
                     src={item?.images?.[1]?.url}
                     className="img-fluid"
                     alt="product image"
@@ -72,13 +75,16 @@ const ProductCard = (props) => {
                 </div>
                 <div className="action-bar position-absolute">
                   <div className="d-flex flex-column gap-15">
-                    <Link>
+                    <Link className="border-0 bg-transparent">
                       <img src="images/prodcompare.svg" alt="compare" />
                     </Link>
-                    <Link>
+                    <Link
+                      to={"/product/" + item?._id}
+                      className="border-0 bg-transparent"
+                    >
                       <img src="images/view.svg" alt="view" />
                     </Link>
-                    <Link>
+                    <Link className="border-0 bg-transparent">
                       <img src="images/add-cart.svg" alt="add cart" />
                     </Link>
                   </div>
