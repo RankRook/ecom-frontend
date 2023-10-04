@@ -17,11 +17,11 @@ import { toast } from "react-toastify";
 const SingleProduct = () => {
   const productState = useSelector((state) => state?.product?.singleproduct);
   const [orderProduct, setorderedProduct] = useState(true);
-  const [quantity1, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const location = useLocation();
   const getProductId = location.pathname.split("/")[2];
   console.log(location);
-  console.log(quantity1);
+  console.log(quantity);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,12 +31,9 @@ const SingleProduct = () => {
   const getAProduct = () => {
     dispatch(getProduct(getProductId));
   };
-  let quantity = Number(quantity1)
-  let productId = productState?._id
-  let price = productState?.price
-  
+
   const uploadCart = () => {
-    dispatch(addProdToCart({productId, quantity, price}));
+    dispatch(addProdToCart({productId: productState?._id, quantity, price: productState?.price}));
   };
 
   // const props = {

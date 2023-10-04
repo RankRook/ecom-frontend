@@ -1,18 +1,5 @@
 import axios from "axios";
-import { base_url } from "../../utils/axiosConfig";
-
-const getTokenFromLocalStorage = localStorage.getItem("user")
-  ? JSON.parse(localStorage.getItem("user"))
-  : null;
-
-export const config = {
-  headers: {
-    Authorization: `Bearer ${
-      getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-    }`,
-    Accept: "application/json",
-  },
-};
+import { base_url, config } from "../../utils/axiosConfig";
 
 const register = async (userData) => {
   const response = await axios.post(`${base_url}user/register`, userData);
