@@ -12,6 +12,7 @@ const ProductCard = (props) => {
 
   const addToWish = (id) => {
     dispatch(addToWishlist(id));
+    console.log(id)
   };
 
   // if (!Array.isArray(data)) {
@@ -44,14 +45,14 @@ const ProductCard = (props) => {
                     <img
                       width="400"
                       height=" 400"
-                      src={item?.images?.[0]?.url}
+                      src={item?.images?.[1]?.url}
                       className="img-fluid"
                       alt="product-image"
                     />
                     <img
                       width=" 400"
                       height=" 400"
-                      src={item?.images?.[1]?.url}
+                      src={item?.images?.[2]?.url}
                       className="img-fluid"
                       alt="product image"
                     />

@@ -737,8 +737,8 @@ a {
 }
 
 .other-product-images > div {
-  padding: 20px;
-  width: 48%;
+  padding: 80px;
+  width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.25);
 }
 

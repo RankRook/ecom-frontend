@@ -9,21 +9,42 @@ import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
 import ReactImageZoom from "react-image-zoom";
 import { Link, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getProduct } from "../features/products/productSlice";
+import { addProdToCart } from "../features/user/authSlice";
+import { toast } from "react-toastify";
 
 const SingleProduct = () => {
+  const productState = useSelector((state) => state?.product?.singleproduct);
   const [orderProduct, setorderedProduct] = useState(true);
-  const location = useLocation()
-  const getProductId = location.pathname.split("/")[2]
-  const dispatch = useDispatch()
-  useEffect(()=>{
-    dispatch(getProduct(getProductId))
-  })
-  const props = {
-    zoomWidth: 600,
-    img: "https://thelightmusic.net/wp-content/uploads/2020/04/267896bf64449d1ac455_49268178378_o.jpg",
+  const [quantity1, setQuantity] = useState(1);
+  const location = useLocation();
+  const getProductId = location.pathname.split("/")[2];
+  console.log(location);
+  console.log(quantity1);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getAProduct();
+  }, []);
+
+  const getAProduct = () => {
+    dispatch(getProduct(getProductId));
   };
+  let quantity = Number(quantity1)
+  let productId = productState?._id
+  let price = productState?.price
+  
+  const uploadCart = () => {
+    dispatch(addProdToCart({productId, quantity, price}));
+  };
+
+  // const props = {
+  //   width: 596,
+  //   height: 600,
+  //   zoomWidth: 600,
+  //   // img: productState?.images[0].url ? productState?.images[0]?.url : "",
+  // };
   const copyToClipboard = (text) => {
     console.log("text", text);
     var textField = document.createElement("textarea");
@@ -43,53 +64,31 @@ const SingleProduct = () => {
           <div className="row">
             <div className="col-6">
               <div className="main-product-image">
-                <div>
-                  <ReactImageZoom {...props} />
-                </div>
+                <div>{/* <ReactImageZoom {...props} /> */}</div>
               </div>
-              <div className="other-product-images d-flex gap-15">
+              <div className="other-product-images d-flex gap-30">
                 <div>
-                  <img
-                    src="https://thelightmusic.net/wp-content/uploads/2020/04/267896bf64449d1ac455_49268178378_o.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <img
-                    src="https://thelightmusic.net/wp-content/uploads/2020/04/267896bf64449d1ac455_49268178378_o.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <img
-                    src="https://thelightmusic.net/wp-content/uploads/2020/04/267896bf64449d1ac455_49268178378_o.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <img
-                    src="https://thelightmusic.net/wp-content/uploads/2020/04/267896bf64449d1ac455_49268178378_o.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
+                  {/* {productState &&
+                    productState?.images.map((item, index) => {
+                      return (
+                        <img src={item?.url} className="img-fluid" alt="" />
+                      );
+                    })} */}
                 </div>
               </div>
             </div>
             <div className="col-6">
               <div className="main-product-details">
                 <div className="border-bottom">
-                  <h3 className="title">Guitar LakeWood SungHa Jung</h3>
+                  <h3 className="title">{productState?.title}</h3>
                 </div>
                 <div className="border-bottom py-3">
-                  <p className="price"> $ 100</p>
+                  <p className="price"> $ {productState?.price}</p>
                   <div className="d-flex align-items-ceter gap-10">
                     <ReactStars
                       count={5}
                       size={24}
-                      value={3}
+                      value={productState?.totalrating?.toString()}
                       edit={false}
                       activeColor="#ffd700"
                     />
@@ -106,15 +105,15 @@ const SingleProduct = () => {
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Brand: </h3>
-                    <p class="product-data">Hello hello</p>
+                    <p class="product-data">{productState?.brand}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Category: </h3>
-                    <p class="product-data">Hello hello</p>
+                    <p class="product-data">{productState?.category}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Tags: </h3>
-                    <p class="product-data">Hello hello</p>
+                    <p class="product-data">{productState?.tags}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Available: </h3>
@@ -130,10 +129,20 @@ const SingleProduct = () => {
                         max={10}
                         className="form-control"
                         style={{ width: "60px", height: "35px" }}
+                        onChange={(e) => setQuantity(e.target.value)}
+                        value={quantity}
                       />
                     </div>
                     <div className="d-flex align-item-center gap-15 ms-2">
-                      <button className="button border-0">Add to cart</button>
+                      <button
+                        className="button border-0"
+                        type="button"
+                        onClick={() => {
+                          uploadCart();
+                        }}
+                      >
+                        Add to cart
+                      </button>
                       <button className="button signup">Buy It Now</button>
                     </div>
                   </div>
@@ -184,12 +193,12 @@ const SingleProduct = () => {
             <div className="col-12">
               <h4>Description</h4>
               <div className="bg-white p-3">
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste
-                  nemo consequuntur quaerat. Eos laboriosam obcaecati cumque
-                  unde! Natus, voluptas similique totam corporis explicabo,
-                  alias atque officia suscipit repellendus numquam quos.
-                </p>
+                <p
+                  className="desc"
+                  dangerouslySetInnerHTML={{
+                    __html: productState?.description,
+                  }}
+                ></p>
               </div>
             </div>
           </div>

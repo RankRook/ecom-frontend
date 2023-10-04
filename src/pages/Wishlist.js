@@ -4,7 +4,7 @@ import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserProductWishList } from "../features/user/userSlice";
+import { getUserProductWishList } from "../features/user/authSlice";
 
 
 const Wishlist = () => {

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { authService } from "./userService";
+import { authService } from "./authService";
 import { toast } from "react-toastify";
 
 export const registerUser = createAsyncThunk(
@@ -34,15 +34,27 @@ export const getUserProductWishList = createAsyncThunk(
   }
 );
 
+export const addProdToCart = createAsyncThunk(
+  "user/cart",
+  async (cartData, thunkAPI) => {
+    try {
+      return await authService.addToCart(cartData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+
 const getCustomerfromLocalStorage = localStorage.getItem("customer")
   ? JSON.parse(localStorage.getItem("customer"))
   : null;
 
 
-
 const initialState = {
   user: getCustomerfromLocalStorage,
   isError: false,
+  isTrue: false,
   isSuccess: false,
   isLoading: false,
   message: "",
@@ -54,8 +66,9 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builer) => {
     builer
-      .addCase(registerUser.pending, (state) => {
+      .addCase(registerUser.pending, (state, action) => {
         state.isLoading = true;
+        state.message = action.error;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -111,7 +124,25 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
         state.message = action.error;
+      }).addCase(addProdToCart.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(addProdToCart.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.cartProduct = action.payload;
+        if(state.isSuccess){
+          toast.success("Product Added To Cart")
+        }
+      })
+      .addCase(addProdToCart.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error;
       });
+      
   },
 });
 
