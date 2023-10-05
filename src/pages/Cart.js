@@ -1,19 +1,55 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux"; 
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { getUserCart } from "../features/user/authSlice";
+import {
+  getUserCart,
+  deleteProductCart,
+  updateCartProduct,
+} from "../features/user/authSlice";
 
 const Cart = () => {
-  const userCartState = useSelector((state) => state?.auth?.cartProducts); 
+  const [prodUpdateDetail, setProdUpdateDetail] = useState(null);
+   const [totalAmount, setTotalAmount] = useState(null);
+  const userCartState = useSelector((state) => state?.auth?.cartProducts);
   const dispatch = useDispatch();
-  console.log(userCartState)
+
+  useEffect(() => {
+    if (prodUpdateDetail !== null) {
+      dispatch(
+        updateCartProduct({
+          cartItemId: prodUpdateDetail?.cartItemId,
+          quantity: prodUpdateDetail?.quantity,
+        })
+      );
+      setTimeout(() => {
+        dispatch(getUserCart());
+      }, 100);
+    }
+  }, [prodUpdateDetail]);
+
   useEffect(() => {
     dispatch(getUserCart());
   }, []);
+  const deleteACartProduct = (id) => {
+    dispatch(deleteProductCart(id));
+    setTimeout(() => {
+      dispatch(getUserCart());
+    }, 100);
+  };
+
+  useEffect(()=>{
+    let sum = 0;
+    for(let index = 0; index < userCartState?.length; index ++){
+      sum = sum +(Number(userCartState[index].quantity) * userCartState[index].price)
+      setTotalAmount(sum)
+    }
+  },[userCartState])
+
   return (
     <>
       <Meta title={"Cart"} />
@@ -28,8 +64,7 @@ const Cart = () => {
                 <h4 className="cart-col-3">Quantity</h4>
                 <h4 className="cart-col-4">Total</h4>
               </div>
-              {
-              Array.isArray(userCartState) &&
+              {Array.isArray(userCartState) &&
                 userCartState?.map((item, index) => {
                   return (
                     <div
@@ -58,16 +93,33 @@ const Cart = () => {
                             type="number"
                             min={1}
                             max={10}
-                            value={item?.quantity}
+                            value={
+                              prodUpdateDetail?.quantity
+                                ? prodUpdateDetail?.quantity
+                                : item?.quantity
+                            }
+                            onChange={(e) => {
+                              setProdUpdateDetail({
+                                cartItemId: item?._id,
+                                quantity: e.target.value,
+                              });
+                            }}
                             name=""
                             id=""
                           />
                         </div>
                         <div>
-                          <AiFillDelete className="text-danger " />
+                          <AiFillDelete
+                            onClick={() => {
+                              deleteACartProduct(item?._id);
+                            }}
+                            className="text-danger "
+                          />
                         </div>
                       </h4>
-                      <h4 className="cart-col-4">$ {item?.price * item?.quantity}</h4>
+                      <h4 className="cart-col-4">
+                        $ {item?.price * item?.quantity}
+                      </h4>
                     </div>
                   );
                 })}
@@ -77,13 +129,16 @@ const Cart = () => {
                 <Link to="/product" className="button">
                   Continue To Shopping
                 </Link>
-                <div className="d-flex flex-column align-items-end">
-                  <h4>SubTotal: $ 200</h4>
+                {
+                  (totalAmount !== null || totalAmount !==0 ) && 
+                  <div className="d-flex flex-column align-items-end">
+                  <h4>SubTotal: $ {totalAmount}</h4>
                   <p>Taxes and Shipping calculated at checkout</p>
                   <Link to="/checkout" className="button">
                     CheckOut
                   </Link>
                 </div>
+                }
               </div>
             </div>
           </div>

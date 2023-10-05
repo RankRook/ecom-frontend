@@ -10,33 +10,52 @@ import ReactStars from "react-stars";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
 import ReactImageZoom from "react-image-zoom";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct } from "../features/products/productSlice";
-import { addProdToCart } from "../features/user/authSlice";
+import { addProdToCart, getUserCart } from "../features/user/authSlice";
 import { toast } from "react-toastify";
 
 const SingleProduct = () => {
-  const productState = useSelector((state) => state?.product?.singleproduct);
   const [orderProduct, setorderedProduct] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [alreadyAddCart, setAlreadyAddCart] = useState(false);
   const location = useLocation();
   const getProductId = location.pathname.split("/")[2];
-  console.log(location);
-  console.log(quantity);
+  const productState = useSelector((state) => state?.product?.singleproduct);
+  const cartState = useSelector((state) => state?.auth?.cartProducts);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     getAProduct();
   }, []);
 
+  useEffect(() => {
+    for (let index = 0; index < cartState?.length; index++) {
+      if (getProductId === cartState[index]?.productId?._id) {
+        setAlreadyAddCart(true);
+      }
+    }
+  });
   const getAProduct = () => {
     dispatch(getProduct(getProductId));
+    dispatch(getUserCart());
   };
 
   const uploadCart = () => {
-    dispatch(addProdToCart({productId: productState?._id, quantity, price: productState?.price}));
+    dispatch(
+      addProdToCart({
+        productId: productState?._id,
+        quantity,
+        price: productState?.price,
+      })
+    )
+    setTimeout(()=>{
+      getAProduct();
+    }, 200);
   };
+
 
   // const props = {
   //   width: 596,
@@ -119,30 +138,40 @@ const SingleProduct = () => {
                     <p class="product-data">IN Stock</p>
                   </div>
                   <div className="d-flex gap-15 align-items-center flex-row my-2 mb-3">
-                    <h3 className="product-heading">Quantity: </h3>
-                    <div>
-                      <input
-                        type="number"
-                        name=""
-                        min={1}
-                        max={10}
-                        className="form-control"
-                        style={{ width: "60px", height: "35px" }}
-                        onChange={(e) => setQuantity(e.target.value)}
-                        value={quantity}
-                      />
-                    </div>
-                    <div className="d-flex align-item-center gap-15 ms-2">
+                    {alreadyAddCart === false && (
+                      <>
+                        <h3 className="product-heading">Quantity: </h3>
+                        <div>
+                          <input
+                            type="number"
+                            name=""
+                            min={1}
+                            max={10}
+                            className="form-control"
+                            style={{ width: "60px", height: "35px" }}
+                            onChange={(e) => setQuantity(e.target.value)}
+                            value={quantity}
+                          />
+                        </div>
+                      </>
+                    )}
+                    <div
+                      className={
+                        alreadyAddCart
+                          ? "mb-0"
+                          : "d-flex align-item-center gap-15 ms-2"
+                      }
+                    >
                       <button
                         className="button border-0"
                         type="button"
                         onClick={() => {
-                          uploadCart();
+                          alreadyAddCart ? navigate("/cart") : uploadCart();
                         }}
                       >
-                        Add to cart
+                        {alreadyAddCart ? "Go to cart" : "Add to cart"}
                       </button>
-                      <button className="button signup">Buy It Now</button>
+                      {/* <button className="button signup">Buy It Now</button> */}
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-15">

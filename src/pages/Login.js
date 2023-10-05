@@ -1,7 +1,7 @@
 import React from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CustomInput from "../components/CustomInput";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -16,7 +16,9 @@ const signUpSchema = yup.object({
   password: yup.string().required("Password is requird"),
 });
 
-function Login() {
+function Login(history) {
+  const navigate = useNavigate();
+  
   const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
@@ -26,6 +28,9 @@ function Login() {
     validationSchema: signUpSchema,
     onSubmit: (values) => {
       dispatch(loginUser(values));
+      navigate("/");
+      this.setState({ redirect: true });
+      // history.push('/');
     },
   });
   return (

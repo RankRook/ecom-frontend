@@ -30,17 +30,39 @@ const addToCart = async (cartData) => {
   }
 };
 
-const getCart = async()=>{
+const getCart = async () => {
   const response = await axios.get(`${base_url}user/cart`, config);
-  if(response.data){
-    return response.data
+  if (response.data) {
+    return response.data;
   }
-}
+};
+
+const removeCart = async (cartItemId) => {
+  const response = await axios.delete(
+    `${base_url}user/delete-product-cart/${cartItemId}`,
+    config
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
+
+const updateProdFromCart = async (cartDetail) => {
+  const response = await axios.delete(
+    `${base_url}user/update-product-cart/${cartDetail.cartItemId}/${cartDetail.quantity}`,
+    config
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
 
 export const authService = {
   register,
   login,
   getUserWishList,
   addToCart,
-  getCart
+  getCart,
+  removeCart,
+  updateProdFromCart,
 };

@@ -1,19 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
 
-const Header = ({history }) => {
+const Header = ({ history }) => {
   // Get the history object from React Router
-  const token = localStorage.getItem('token');
-
+  const token = localStorage.getItem("token");
   // Function to handle logout
   const handleLogout = () => {
     // Remove the token from localStorage
-    localStorage.removeItem('token');
-    
+    localStorage.removeItem("token");
     // Redirect the user to the login page
-    history.push('/login');
+    history.push("/login");
   };
+
+  const dispatch = useDispatch();
+  const [total, setTotal] = useState(null);
+  const cartState = useSelector((state) => state?.auth?.cartProducts);
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < cartState?.length; index++) {
+      sum =
+        sum +
+        Number(cartState[index].quantity * Number(cartState[index].price));
+      setTotal(sum);
+    }
+  }, [cartState]);
 
   return (
     <>
@@ -88,19 +100,24 @@ const Header = ({history }) => {
                 {token ? (
                   // Render the Logout link if a token exists
                   <div>
-                    <Link to="#" className='d-flex align-items-center gap-10' onClick={handleLogout}>
-                      <img src="images\logout.svg" alt='logout' />
-                      <p className='mb-0'>
-                        Logout
-                      </p>
+                    <Link
+                      to="#"
+                      className="d-flex align-items-center gap-10"
+                      onClick={handleLogout}
+                    >
+                      <img src="images\user.svg" alt="logout" />
+                      <p className="mb-0">Logout</p>
                     </Link>
                   </div>
                 ) : (
                   // Render the Login link if no token exists
                   <div>
-                    <Link to="login" className='d-flex align-items-center gap-10'>
-                      <img src="images\user.svg" alt='user' />
-                      <p className='mb-0'>
+                    <Link
+                      to="login"
+                      className="d-flex align-items-center gap-10"
+                    >
+                      <img src="images\user.svg" alt="user" />
+                      <p className="mb-0">
                         Login <br /> MyAccount
                       </p>
                     </Link>
@@ -110,8 +127,8 @@ const Header = ({history }) => {
                   <Link to="cart" className="d-flex align-items-center gap-10">
                     <img src="images\cart.svg" alt="cart" />
                     <div className="d-flex flex-column">
-                      <span className="badge bg-white text-dark">0</span>
-                      <p className="mb-0">$ 500</p>
+                      <span className="badge bg-white text-dark">{cartState?.length ? cartState?.length : 0}</span>
+                      <p className="mb-0">$ {total ? total : 0}</p>
                     </div>
                   </Link>
                 </div>

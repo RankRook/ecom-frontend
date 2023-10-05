@@ -56,6 +56,29 @@ export const getUserCart = createAsyncThunk(
   }
 );
 
+export const deleteProductCart = createAsyncThunk(
+  "user/cart/product/delete",
+  async ( cartItemId, thunkAPI) => {
+    try {
+      return await authService.removeCart(cartItemId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateCartProduct = createAsyncThunk(
+  "user/cart/product/update",
+  async ( cartDetail, thunkAPI) => {
+    try {
+      return await authService.updateProdFromCart(cartDetail);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+
 
 const getCustomerfromLocalStorage = localStorage.getItem("customer")
   ? JSON.parse(localStorage.getItem("customer"))
@@ -162,6 +185,34 @@ export const authSlice = createSlice({
         state.cartProducts = action.payload;
       })
       .addCase(getUserCart.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error;
+      }).addCase(deleteProductCart.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteProductCart.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.deleteCartProduct = action.payload;
+      })
+      .addCase(deleteProductCart.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error;
+      }).addCase(updateCartProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateCartProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.updateCartProduct = action.payload;
+      })
+      .addCase(updateCartProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
