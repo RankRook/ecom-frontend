@@ -18,6 +18,7 @@ const Checkout = () => {
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.auth.cartProducts);
   const [totalAmount, setTotalAmount] = useState(null);
+  const [shippingInfo, setShippingInfo] = useState(null)
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < cartState?.length; index++) {
@@ -38,7 +39,7 @@ const Checkout = () => {
     },
     validationSchema: shippingSchema,
     onSubmit: (values) => {
-      alert(values);
+      setShippingInfo(values)
     },
   });
   return (
@@ -95,10 +96,8 @@ const Checkout = () => {
                       </option>
                       <option value="Hanoi">Hanoi</option>
                     </select>
-                    <div className="error" color="red"> 
-                      {
-                        formik.touched.country && formik.errors.country
-                      }
+                    <div className="errors ">
+                      {formik.touched.country && formik.errors.country}
                     </div>
                   </div>
                   <div className="flex-grow-1">
@@ -106,35 +105,71 @@ const Checkout = () => {
                       type="text"
                       placeholder="First Name"
                       className="form-control"
+                      name="firstname"
+                      value={formik.values.firstname}
+                      onChange={formik.handleChange("firstname")}
+                      onBlur={formik.handleBlur("firstname")}
                     />
+                    <div className="errors ">
+                      {formik.touched.firstname && formik.errors.firstname}
+                    </div>
                   </div>
                   <div className="flex-grow-1">
                     <input
                       type="text"
                       placeholder="Last Name"
                       className="form-control"
+                      name="lastname"
+                      value={formik.values.lastname}
+                      onChange={formik.handleChange("lastname")}
+                      onBlur={formik.handleBlur("lastname")}
                     />
+                    <div className="errors">
+                      {formik.touched.lastname && formik.errors.lastname}
+                    </div>
                   </div>
+
                   <div className="w-100">
                     <input
                       type="text"
                       placeholder="Address"
                       className="form-control"
+                      name="address"
+                      value={formik.values.address}
+                      onChange={formik.handleChange("address")}
+                      onBlur={formik.handleBlur("address")}
                     />
+                    <div className="errors " >
+                      {formik.touched.address && formik.errors.address}
+                    </div>
                   </div>
                   <div className="w-100">
                     <input
                       type="text"
                       placeholder="City"
                       className="form-control"
+                      name="city"
+                      value={formik.values.city}
+                      onChange={formik.handleChange("city")}
+                      onBlur={formik.handleBlur("city")}
                     />
+                    <div className="errors ">
+                      {formik.touched.city && formik.errors.city}
+                    </div>
                   </div>
                   <div className="w-100">
                     <input
                       type="text"
                       placeholder="Mobile Phone"
                       className="form-control"
+                      name="mobile"
+                      value={formik.values.mobile}
+                      onChange={formik.handleChange("mobile")}
+                      onBlur={formik.handleBlur("mobile")}
                     />
+                    <div className="errors ">
+                      {formik.touched.mobile && formik.errors.mobile}
+                    </div>
                   </div>
                   <div className="w-100">
                     <div className="d-flex justify-content-between align-content-center">
@@ -142,7 +177,9 @@ const Checkout = () => {
                         <BiArrowBack className="me-2" />
                         Return to Cart
                       </Link>
-                      <button className="button" type="submit">Place Order</button>
+                      <button className="button" type="submit">
+                        Place Order
+                      </button>
                     </div>
                   </div>
                   <div></div>
