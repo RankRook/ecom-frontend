@@ -4,21 +4,30 @@ import { Link } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
-import * as yup from "yup";
+import { PayPalButton } from "react-paypal-button-v2";
+// import * as PaymentService from "../features/payment/paymentService"
+import { object, string, number, date, InferType } from 'yup';
+import * as authService  from "../features/user/authService";
+import { createAnOrder } from "../features/user/authSlice";
 const Checkout = () => {
-  const shippingSchema = yup.object({
-    firstname: yup.string().required("First name is required"),
-    lastname: yup.string().required("Last name should be required"),
-    address: yup.string().required("Address is required"),
-    city: yup.string().required("City is required"),
-    mobile: yup.number().required("Mobile phone is required"),
-    country: yup.string().required("Country is requird"),
+  const shippingSchema = object({
+    firstname: string().required("First name is required"),
+    lastname: string().required("Last name should be required"),
+    address: string().required("Address is required"),
+    city: string().required("City is required"),
+    mobile: number().required("Mobile phone is required"),
+    country: string().required("Country is requird"),
   });
 
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.auth.cartProducts);
+  // const userState = useSelector((state) => state.auth);
+  // const [sdkReady, setSdkReady] = useState(false);
+  const [payment, setPayment] = useState("later_money");
   const [totalAmount, setTotalAmount] = useState(null);
-  const [shippingInfo, setShippingInfo] = useState(null)
+  const [totalAmountDiscount, setTotalAmountDiscount] = useState(null);
+  const [shippingInfo, setShippingInfo] = useState(null);
+  const [cartProduct, setCartProduct] = useState(null);
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < cartState?.length; index++) {
@@ -26,12 +35,65 @@ const Checkout = () => {
       setTotalAmount(sum);
     }
   }, [cartState]);
+  
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < cartState?.length; index++) {
+      sum = sum + Number(cartState[index].quantity) * cartState[index].price + 5;
+      setTotalAmountDiscount(sum);
+    }
+  }, [cartState]);
+
+  useEffect(() => {
+    let items = [];
+    for (let index = 0; index < cartState?.length; index++) {
+      items.push({
+        product: cartState[index].productId._id,
+        quantity: cartState[index].quantity,
+        price: cartState[index].price,
+      });
+    }
+    setCartProduct(items)
+  }, []);
+
+
+  // const addPaypalScript = async () => {
+  //   const { data } = await authService.getConfig();
+  //   console.log(data)
+  //   const script = document.createElement("script");
+  //   script.type = "text/javascript";
+  //   script.src = `https://www.paypal.com/sdk/js?client-id=${data}`;
+  //   script.async = true;
+  //   script.onload = () => {
+  //     setSdkReady(true);
+  //   };
+  //   document.body.appendChild(script);
+  // };
+
+  // useEffect(() => {
+  //   if (!window.paypal) {
+  //     addPaypalScript();
+  //   } else {
+  //     setSdkReady(true);
+  //   }
+  // }, []);
+
+  // const onSuccessPaypal = () => {
+  //   dispatch(
+  //     createAnOrder({
+  //       totalPrice: totalAmount,
+  //       // totalPriceAfterDiscount: totalAmountDiscount,
+  //       orderItems: cartProduct,
+  //       shippingInfo,
+  //       paymentMethod: payment,
+  //     })
+  //   );
+  // };
 
   const formik = useFormik({
     initialValues: {
       firstname: "",
       lastname: "",
-      email: "",
       mobile: "",
       address: "",
       country: "",
@@ -40,7 +102,16 @@ const Checkout = () => {
     validationSchema: shippingSchema,
     onSubmit: (values) => {
       setShippingInfo(values)
-    },
+      dispatch(
+        createAnOrder({
+          totalPrice: totalAmount,
+          // totalPriceAfterDiscount: totalAmountDiscount,
+          orderItems: cartProduct,
+          shippingInfo,
+          paymentMethod: payment,
+        })
+      )
+      },
   });
   return (
     <>
@@ -139,7 +210,7 @@ const Checkout = () => {
                       onChange={formik.handleChange("address")}
                       onBlur={formik.handleBlur("address")}
                     />
-                    <div className="errors " >
+                    <div className="errors ">
                       {formik.touched.address && formik.errors.address}
                     </div>
                   </div>
@@ -177,8 +248,15 @@ const Checkout = () => {
                         <BiArrowBack className="me-2" />
                         Return to Cart
                       </Link>
-                      <button className="button" type="submit">
-                        Place Order
+                      <button className="button"
+                        type="submit">Place Order
+                      {/* <PayPalButton
+                        className="button"
+                        type="submit"
+                        amount={totalAmount}
+                        onSuccess={onSuccessPaypal}
+                        // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+                      /> */}
                       </button>
                     </div>
                   </div>
@@ -242,6 +320,7 @@ const Checkout = () => {
                   $ {totalAmount ? totalAmount + 5 : "0"}
                 </h5>
               </div>
+              <div style={{ width: "320px" }}></div>
             </div>
           </div>
         </div>
