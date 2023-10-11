@@ -5,16 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Header = ({ history }) => {
   // Get the history object from React Router
-  const token = localStorage.getItem("token");
-  // Function to handle logout
-  const handleLogout = () => {
-    // Remove the token from localStorage
-    localStorage.removeItem("token");
-    // Redirect the user to the login page
-    history.push("/login");
-  };
-
   const dispatch = useDispatch();
+  const authState = useSelector((state) => state.auth);
   const [total, setTotal] = useState(null);
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   useEffect(() => {
@@ -97,37 +89,28 @@ const Header = ({ history }) => {
                     </p>
                   </Link>
                 </div>
-                {token ? (
-                  // Render the Logout link if a token exists
-                  <div>
-                    <Link
-                      to="#"
-                      className="d-flex align-items-center gap-10"
-                      onClick={handleLogout}
-                    >
-                      <img src="images\user.svg" alt="logout" />
-                      <p className="mb-0">Logout</p>
-                    </Link>
-                  </div>
-                ) : (
-                  // Render the Login link if no token exists
-                  <div>
-                    <Link
-                      to="login"
-                      className="d-flex align-items-center gap-10"
-                    >
-                      <img src="images\user.svg" alt="user" />
+                <div>
+                  <Link to={authState?.user===null ? "login" : "/profile"} className="d-flex align-items-center gap-10">
+                    <img src="images\user.svg" alt="user" />
+                    {authState?.user === "" ? (
                       <p className="mb-0">
                         Login <br /> MyAccount
                       </p>
-                    </Link>
-                  </div>
-                )}
+                    ) : (
+                      <p className="mb-0">
+                        Welcome {authState?.user?.firstname}
+                      </p>
+                    )}
+                  </Link>
+                </div>
+
                 <div>
                   <Link to="cart" className="d-flex align-items-center gap-10">
                     <img src="images\cart.svg" alt="cart" />
                     <div className="d-flex flex-column">
-                      <span className="badge bg-white text-dark">{cartState?.length ? cartState?.length : 0}</span>
+                      <span className="badge bg-white text-dark">
+                        {cartState?.length ? cartState?.length : 0}
+                      </span>
                       <p className="mb-0">$ {total ? total : 0}</p>
                     </div>
                   </Link>
@@ -176,6 +159,7 @@ const Header = ({ history }) => {
                   <div className="d-flex align-items-center gap-15">
                     <NavLink to="/">Home</NavLink>
                     <NavLink to="/product">Our Store</NavLink>
+                    <NavLink to="/my-orders">My Orders</NavLink>
                     <NavLink to="/blogs">Blogs</NavLink>
                     <NavLink to="/contact">Contact</NavLink>
                   </div>
