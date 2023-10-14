@@ -11,6 +11,7 @@ import CompareProduct from "./pages/CompareProduct";
 import Wishlist from "./pages/Wishlist";
 import Login from "./pages/Login";
 import Forgotpassword from "./pages/Forgotpassword";
+import ResetPassword from "./pages/ResetPassword";
 import Signup from "./pages/Signup";
 import SingleBlog from "./pages/SingleBlog";
 import SingleProduct from "./pages/SingleProduct";
@@ -33,6 +34,8 @@ function App() {
           <Route path="blogs" element={<Blog />} />
           <Route path="blog/:id" element={<SingleBlog />} />
           <Route path="compareproduct" element={<CompareProduct />} />
+          <Route path="reset-password/:id" element={<ResetPassword />} />
+          <Route path="forgot-password" element={<Forgotpassword />} />
           <Route
             path="wishlist"
             element={
@@ -49,7 +52,7 @@ function App() {
               </OpenRoutes>
             }
           />
-          <Route path="forgot-password" element={<Forgotpassword />} />
+
           <Route
             path="signup"
             element={
@@ -66,6 +69,7 @@ function App() {
               </PrivateRoutes>
             }
           />
+
           <Route
             path="my-orders"
             element={

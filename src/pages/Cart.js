@@ -18,6 +18,7 @@ const Cart = () => {
   const userCartState = useSelector((state) => state?.auth?.cartProducts);
   const dispatch = useDispatch();
 
+  
   useEffect(() => {
     if (prodUpdateDetail !== null) {
       dispatch(
@@ -31,6 +32,7 @@ const Cart = () => {
       }, 100);
     }
   }, [prodUpdateDetail]);
+
 
   useEffect(() => {
     dispatch(getUserCart());
@@ -94,9 +96,9 @@ const Cart = () => {
                             min={1}
                             max={10}
                             value={
-                              prodUpdateDetail?.quantity
-                                ? prodUpdateDetail?.quantity
-                                : item?.quantity
+                              // prodUpdateDetail?.quantity
+                              //   ? prodUpdateDetail?.quantity
+                                 item?.quantity
                             }
                             onChange={(e) => {
                               setProdUpdateDetail({

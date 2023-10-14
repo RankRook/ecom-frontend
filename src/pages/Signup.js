@@ -13,12 +13,12 @@ const signUpSchema = yup.object({
   lastname: yup.string().required("Last name should be required"),
   email: yup.string().nullable().email("Email is required"),
   mobile: yup.number().required("Mobile phone is required"),
-  password: yup.string().required("Password is requird"),
+  password: yup.string().required("Password is requird").min(8, "Password must be at least 8 characters long"),
 });
 
 function Signup() {
-
   const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       firstname: "",
@@ -28,8 +28,8 @@ function Signup() {
       password: "",
     },
     validationSchema: signUpSchema,
-    onSubmit: (values) => {
-      dispatch(registerUser(values))
+    onSubmit:(values) => {
+        dispatch(registerUser(values));
     },
   });
   return (
@@ -119,6 +119,7 @@ function Signup() {
                       </button>
                     </div>
                   </div>
+                  
                 </form>
               </div>
             </div>

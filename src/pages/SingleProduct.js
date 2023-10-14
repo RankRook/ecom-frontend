@@ -12,7 +12,7 @@ import { AiOutlineHeart } from "react-icons/ai";
 import ReactImageZoom from "react-image-zoom";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getProduct } from "../features/products/productSlice";
+import { addRating, getProduct } from "../features/products/productSlice";
 import { addProdToCart, getUserCart } from "../features/user/authSlice";
 import { toast } from "react-toastify";
 
@@ -20,6 +20,9 @@ const SingleProduct = () => {
   const [orderProduct, setorderedProduct] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [alreadyAddCart, setAlreadyAddCart] = useState(false);
+  const [star, setStar] = useState(null);
+  const [comment, setComment] = useState(null);
+
   const location = useLocation();
   const getProductId = location.pathname.split("/")[2];
   const productState = useSelector((state) => state?.product?.singleproduct);
@@ -27,6 +30,26 @@ const SingleProduct = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const userState = useSelector((state) => state?.auth.user)
+  const fullname = userState?.firstname + " " + userState?.lastname
+
+  const addRatingToProduct = () => {
+    if (star === null) {
+      toast.error("Please add star rating");
+      return false;
+    } else if (comment === null) {
+      toast.error("Please Write Review About the Product");
+      return false;
+    } else {
+      dispatch(
+        addRating({ star: star, comment: comment, prodId: getProductId, fullname: fullname })
+      );
+      // setTimeout(() => {
+      //   dispatch(getAProduct(getProductId));
+      // }, 100);
+    }
+    return false;
+  };
   useEffect(() => {
     getAProduct();
   }, []);
@@ -50,19 +73,19 @@ const SingleProduct = () => {
         quantity,
         price: productState?.price,
       })
-    )
-    setTimeout(()=>{
+    );
+    setTimeout(() => {
       getAProduct();
     }, 200);
   };
 
-
-  // const props = {
-  //   width: 596,
-  //   height: 600,
-  //   zoomWidth: 600,
-  //   // img: productState?.images[0].url ? productState?.images[0]?.url : "",
-  // };
+  const props = {
+    width: 600,
+    height: 600,
+    zoomWidth: 600,
+    // img: productState?.images[1].url ? productState?.images[1]?.url : "",
+    img : "https://nhaccutienmanh.vn/wp-content/uploads/2021/07/dan-guitar-acoustic-yamaha-f-370-33-768x768.jpg"
+  };
   const copyToClipboard = (text) => {
     console.log("text", text);
     var textField = document.createElement("textarea");
@@ -76,20 +99,21 @@ const SingleProduct = () => {
   return (
     <>
       <Meta title={"Dynamic Product Name"} />
-      <BreadCrumb title="Dynamic Product Name" />
+      <BreadCrumb title={productState?.title} />
       <div className="main-product-wrapper home-wrapper-2 py-5">
         <div className="container-xxl">
           <div className="row">
             <div className="col-6">
               <div className="main-product-image">
-                <div>{/* <ReactImageZoom {...props} /> */}</div>
+                <div><ReactImageZoom {...props} /></div>
               </div>
               <div className="other-product-images d-flex gap-30">
+              
                 <div>
                   {/* {productState &&
                     productState?.images.map((item, index) => {
                       return (
-                        <img src={item?.url} className="img-fluid" alt="" />
+                        <img src="https://nhaccutienmanh.vn/wp-content/uploads/2021/07/dan-guitar-acoustic-yamaha-f-370-33-768x768.jpg" className="img-fluid" alt="" />
                       );
                     })} */}
                 </div>
@@ -110,7 +134,7 @@ const SingleProduct = () => {
                       edit={false}
                       activeColor="#ffd700"
                     />
-                    <p className="mb-0 t-review">(2 Reviews)</p>
+                    {/* <p className="mb-0 t-review">(2 Reviews)</p> */}
                   </div>
                   <a className="review-btn" href="#review">
                     Write a Review
@@ -267,51 +291,61 @@ const SingleProduct = () => {
                 </div>
                 <div id="review" className="review-form py-4">
                   <h4 className="mb-2">Write A Review</h4>
-                  <form action="" className="d-flex flex-column gap-15">
-                    <div className="">
-                      <ReactStars
-                        count={5}
-                        size={24}
-                        value={3}
-                        edit={true}
-                        activeColor="#ffd700"
-                      />
-                    </div>
-                    <div>
-                      <textarea
-                        name=""
-                        id=""
-                        className="w-100 form-control"
-                        cols="30"
-                        row="10"
-                        placeholder="Comments"
-                      ></textarea>
-                    </div>
-                    <div className="d-flex justify-content-end">
-                      <button className="button border-0">Submit Review</button>
-                    </div>
-                  </form>
+
+                  <div className="">
+                    <ReactStars
+                      count={5}
+                      size={24}
+                      value={3}
+                      edit={true}
+                      activeColor="#ffd700"
+                      onChange={(e) => {
+                        setStar(e);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <textarea
+                      name=""
+                      id=""
+                      className="w-100 form-control"
+                      cols="30"
+                      row="10"
+                      placeholder="Comments"
+                      onChange={(e) => {
+                        setComment(e.target.value);
+                      }}
+                    ></textarea>
+                  </div>
+                  <div className="d-flex justify-content-end">
+                    <button
+                      onClick={addRatingToProduct}
+                      className="button border-0"
+                      type="submit"
+                    >
+                      Submit Review
+                    </button>
+                  </div>
                 </div>
                 <div className="reviews mt-4">
-                  <div className="review">
-                    <div className="d-flex gap-10 align-items-center">
-                      <h6 className="mb-0">Hien Dep trai</h6>
-                      <ReactStars
-                        count={5}
-                        size={24}
-                        value={3}
-                        edit={false}
-                        activeColor="#ffd700"
-                      />
-                    </div>
-                    <p className="mt-3">
-                      Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                      Illo placeat molestias porro. Error, illum. Eveniet
-                      laborum ipsa consequuntur voluptates corporis possimus,
-                      neque reprehenderit doloremque iste officia totam aliquam
-                      accusantium mollitia.
-                    </p>
-                  </div>
+                  {productState &&
+                    productState?.ratings1?.map((item, index) => {
+                      return (
+                        <div key={index} className="review">
+                          <div className="d-flex gap-10 align-items-center">
+                            <h6 className="mb-0">({item?.fullname})</h6>
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={item?.star}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                          </div>
+                          <p className="mt-3">{item?.comment}</p>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             </div>

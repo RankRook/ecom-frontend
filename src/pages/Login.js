@@ -8,7 +8,7 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../features/user/authSlice";
 
-const signUpSchema = yup.object({
+const loginSchema = yup.object({
   email: yup
     .string()
     .email("Email should be valid")
@@ -16,7 +16,7 @@ const signUpSchema = yup.object({
   password: yup.string().required("Password is requird"),
 });
 
-function Login(history) {
+function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const formik = useFormik({
@@ -24,10 +24,11 @@ function Login(history) {
       email: "",
       password: "",
     },
-    validationSchema: signUpSchema,
+    validationSchema: loginSchema,
     onSubmit: (values) => {
-      dispatch(loginUser(values));
-      navigate("/")
+      dispatch(loginUser(values)); 
+    
+      navigate("/")   
     },
   });
   return (

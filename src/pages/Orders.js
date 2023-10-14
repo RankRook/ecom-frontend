@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../features/user/authSlice";
+import Container from "../components/Container";
 const Orders = () => {
   const dispatch = useDispatch();
   const orderState = useSelector(
@@ -19,7 +20,7 @@ const Orders = () => {
   return (
     <>
       <BreadCrumb title="My Orders" />
-      <div class="cart-wrapper home-wrapper-2 py-5">
+      <Container class="cart-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-12">
             <div className="row">
@@ -75,7 +76,7 @@ const Orders = () => {
               })}
           </div>
         </div>
-      </div>
+      </Container>
     </>
   );
 };
