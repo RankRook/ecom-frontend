@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
 import CustomInput from "../components/CustomInput";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/authSlice";
+import { useNavigate } from "react-router-dom";
 
 
 const signUpSchema = yup.object({
@@ -13,12 +14,13 @@ const signUpSchema = yup.object({
   lastname: yup.string().required("Last name should be required"),
   email: yup.string().nullable().email("Email is required"),
   mobile: yup.number().required("Mobile phone is required"),
-  password: yup.string().required("Password is requird"),
+  password: yup.string().required("Password is requird").min(8, "Password must be at least 8 characters long"),
 });
 
 function Signup() {
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const authState = useSelector(state => state.auth)
   const formik = useFormik({
     initialValues: {
       firstname: "",
@@ -28,10 +30,15 @@ function Signup() {
       password: "",
     },
     validationSchema: signUpSchema,
-    onSubmit: (values) => {
-      dispatch(registerUser(values))
+    onSubmit:(values) => {
+        dispatch(registerUser(values));
     },
   });
+  useState(()=>{
+    if(authState.createdUser !== null &&  authState.isError ===false){
+      navigate('/login')
+    }
+  },[authState])
   return (
     <>
       <Meta title={"Sign Up"} />
@@ -119,6 +126,7 @@ function Signup() {
                       </button>
                     </div>
                   </div>
+                  
                 </form>
               </div>
             </div>

@@ -11,11 +11,17 @@ import CompareProduct from "./pages/CompareProduct";
 import Wishlist from "./pages/Wishlist";
 import Login from "./pages/Login";
 import Forgotpassword from "./pages/Forgotpassword";
-import Signup from "./pages/Signup"
+import ResetPassword from "./pages/ResetPassword";
+import Signup from "./pages/Signup";
 import SingleBlog from "./pages/SingleBlog";
 import SingleProduct from "./pages/SingleProduct";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Profile from "./pages/Profile";
+import { PrivateRoutes } from "./routing/PrivateRoute";
+import { OpenRoutes } from "./routing/OpenRoute";
+import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
 function App() {
   return (
     <BrowserRouter>
@@ -29,12 +35,74 @@ function App() {
           <Route path="blogs" element={<Blog />} />
           <Route path="blog/:id" element={<SingleBlog />} />
           <Route path="compareproduct" element={<CompareProduct />} />
-          <Route path="wishlist" element={<Wishlist />} />
-          <Route path="login" element={<Login />} />
+          <Route path="reset-password/:id" element={<ResetPassword />} />
           <Route path="forgot-password" element={<Forgotpassword />} />
-          <Route path="signup" element={<Signup />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path="checkout" element={<Checkout />} />
+          <Route
+            path="wishlist"
+            element={
+              <PrivateRoutes>
+                <Wishlist />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="login"
+            element={
+              <OpenRoutes>
+                <Login />
+              </OpenRoutes>
+            }
+          />
+
+          <Route
+            path="signup"
+            element={
+              <OpenRoutes>
+                <Signup />
+              </OpenRoutes>
+            }
+          />
+          <Route
+            path="cart"
+            element={
+              <PrivateRoutes>
+                <Cart />
+              </PrivateRoutes>
+            }
+          />
+
+          <Route
+            path="my-orders"
+            element={
+              <PrivateRoutes>
+                <Orders />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="order/:id"
+            element={
+              <PrivateRoutes>
+                <OrderDetail />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <PrivateRoutes>
+                <Profile />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="checkout"
+            element={
+              <PrivateRoutes>
+                <Checkout />
+              </PrivateRoutes>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>

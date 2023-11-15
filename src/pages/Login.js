@@ -1,14 +1,15 @@
-import React from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import CustomInput from "../components/CustomInput";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/user/authSlice";
 
-const signUpSchema = yup.object({
+const loginSchema = yup.object({
   email: yup
     .string()
     .email("Email should be valid")
@@ -16,23 +17,26 @@ const signUpSchema = yup.object({
   password: yup.string().required("Password is requird"),
 });
 
-function Login(history) {
+function Login() {
   const navigate = useNavigate();
-  
+  const authState = useSelector(state => state.auth)
   const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
-    validationSchema: signUpSchema,
+    validationSchema: loginSchema,
     onSubmit: (values) => {
-      dispatch(loginUser(values));
-      navigate("/");
-      this.setState({ redirect: true });
-      // history.push('/');
+      dispatch(loginUser(values)); 
     },
   });
+
+  useEffect(()=>{
+    if(authState.user !== null && authState.isError === false){
+      navigate("/")
+    }
+  },[authState])
   return (
     <>
       <Meta title={"Login"} />

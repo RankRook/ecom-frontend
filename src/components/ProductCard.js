@@ -40,24 +40,24 @@ const ProductCard = (props) => {
                     <img src="images/wish.svg" alt="wishlist" />
                   </button>
                 </div>
-                <div className="container">
+                {/* <div className="container"> */}
                   <div className="product-image ">
                     <img
-                      width="400"
-                      height=" 400"
-                      src={item?.images?.[1]?.url}
-                      className="img-fluid"
+                      width={400}
+                      height={400}
+                      src={item?.images?.[0]?.url}
+                      className="img-fluid mx-auto"
                       alt="product-image"
                     />
                     <img
-                      width=" 400"
-                      height=" 400"
-                      src={item?.images?.[2]?.url}
-                      className="img-fluid"
+                      width={400}
+                      height={400}
+                      src={item?.images?.[1]?.url}
+                      className="img-fluid mx-auto"
                       alt="product image"
                     />
                   </div>
-                </div>
+                {/* </div> */}
 
                 <div className="product-details">
                   <h6 className="brand">{item?.brand}</h6>
@@ -79,18 +79,18 @@ const ProductCard = (props) => {
                 </div>
                 <div className="action-bar position-absolute">
                   <div className="d-flex flex-column gap-15">
-                    <Link className="border-0 bg-transparent">
+                    {/* <Link className="border-0 bg-transparent">
                       <img src="images/prodcompare.svg" alt="compare" />
-                    </Link>
+                    </Link> */}
                     <Link
                       to={"/product/" + item?._id}
                       className="border-0 bg-transparent"
                     >
                       <img src="images/view.svg" alt="view" />
                     </Link>
-                    <Link className="border-0 bg-transparent">
+                    {/* <Link className="border-0 bg-transparent">
                       <img src="images/add-cart.svg" alt="add cart" />
-                    </Link>
+                    </Link> */}
                   </div>
                 </div>
               </Link>

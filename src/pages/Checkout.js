@@ -1,24 +1,46 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
-import * as yup from "yup";
+import { PayPalButton } from "react-paypal-button-v2";
+import { object, string, number, date, InferType } from "yup";
+import { createAnOrder, emptyUserCart, getAUser, resetState } from "../features/user/authSlice";
+import * as authService from "../features/user/authService";
 const Checkout = () => {
-  const shippingSchema = yup.object({
-    firstname: yup.string().required("First name is required"),
-    lastname: yup.string().required("Last name should be required"),
-    address: yup.string().required("Address is required"),
-    city: yup.string().required("City is required"),
-    mobile: yup.number().required("Mobile phone is required"),
-    country: yup.string().required("Country is requird"),
+  const shippingSchema = object({
+    firstname: string().required("First name is required"),
+    lastname: string().required("Last name should be required"),
+    address: string().required("Address is required"),
+    city: string().required("City is required"),
+    mobile: number().required("Mobile phone is required"),
+    country: string().required("Country is requird"),
   });
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.auth.cartProducts);
+  // const userState = useSelector((state) => state?.auth?.orderedProduct?.order?.shippingInfo);
+  // console.log(userState)
+  const [payment, setPayment] = useState("later_money");
+  const [sdkReady, setSdkReady] = useState(false);
   const [totalAmount, setTotalAmount] = useState(null);
-  const [shippingInfo, setShippingInfo] = useState(null)
+  const [totalAmountDiscount, setTotalAmountDiscount] = useState(null);
+  const [shippingInfo, setShippingInfo] = useState(null);
+  const [cartProduct, setCartProduct] = useState(null);
+  const location = useLocation()
+  const userState = useSelector((state) => state?.auth?.info?.getaUser);
+  const getUsertId = location.pathname.split("/")[2];
+  
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  const getUser = () => {
+    dispatch(getAUser(getUsertId));
+  };
+
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < cartState?.length; index++) {
@@ -27,21 +49,89 @@ const Checkout = () => {
     }
   }, [cartState]);
 
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < cartState?.length; index++) {
+      sum =
+        sum + Number(cartState[index].quantity) * cartState[index].price + 5;
+
+      setTotalAmountDiscount(sum);
+    }
+  }, [cartState]);
+
+
+  useEffect(() => {
+    let items = [];
+    for (let index = 0; index < cartState?.length; index++) {
+      items.push({
+        product: cartState[index].productId._id,
+        quantity: cartState[index].quantity,
+        price: cartState[index].price,
+      });
+    }
+    setCartProduct(items);
+  }, []);
+
+
+  console.log(cartProduct);
+  const addPaypalScript = async () => {
+    const { data } = await authService.getConfig();
+    console.log(data);
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = `https://www.paypal.com/sdk/js?client-id=${data}`;
+    script.async = true;
+    script.onload = () => {
+      setSdkReady(true);
+    };
+    document.body.appendChild(script);
+  };
+
+  useEffect(() => {
+    if (!window.paypal) {
+      addPaypalScript();
+    } else {
+      setSdkReady(true);
+    }
+  }, []);
+
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      firstname: "",
-      lastname: "",
-      email: "",
-      mobile: "",
-      address: "",
-      country: "",
-      city: "",
+      firstname: userState?.firstname || "",
+      lastname: userState?.lastname || "",
+      mobile: userState?.mobile || "",
+      address: userState?.address || "",
+      country: userState?.country || "",
+      city: userState?.city || "",
     },
     validationSchema: shippingSchema,
     onSubmit: (values) => {
-      setShippingInfo(values)
+      setShippingInfo(values);
     },
   });
+  console.log(shippingInfo);
+
+  const onSuccessPaypal = (details, data) => {
+    dispatch(
+      createAnOrder({
+        totalPrice: totalAmount,
+        totalPriceAfterDiscount: totalAmountDiscount,
+        orderItems: cartProduct,
+        paymentMethod: payment,
+        shippingInfo: shippingInfo,
+        isPaid: true,
+      }),
+    );
+    setTimeout(() => {
+      navigate("/admin/product-list");
+      dispatch(emptyUserCart())
+      dispatch(resetState());
+    }, 300);
+  };
+
+  console.log(onSuccessPaypal);
+
   return (
     <>
       <div className="checkout-wrapper py-5 home-wrapper-2">
@@ -139,7 +229,7 @@ const Checkout = () => {
                       onChange={formik.handleChange("address")}
                       onBlur={formik.handleBlur("address")}
                     />
-                    <div className="errors " >
+                    <div className="errors ">
                       {formik.touched.address && formik.errors.address}
                     </div>
                   </div>
@@ -171,6 +261,22 @@ const Checkout = () => {
                       {formik.touched.mobile && formik.errors.mobile}
                     </div>
                   </div>
+
+                  <div className="flex-grow-1">
+                    <input
+                      type="text"
+                      placeholder="Coupon"
+                      className="form-control"
+                      name="coupon"
+                      value={formik.values.coupon}
+                    />                  
+                  </div>
+                  <div className="flex-grow-2">
+                  <button className="button" type="submit">
+                        Apply Coupon
+                      </button>
+                  </div>
+
                   <div className="w-100">
                     <div className="d-flex justify-content-between align-content-center">
                       <Link to="/cart" className="text-dark">
@@ -178,7 +284,7 @@ const Checkout = () => {
                         Return to Cart
                       </Link>
                       <button className="button" type="submit">
-                        Place Order
+                        Get information
                       </button>
                     </div>
                   </div>
@@ -205,7 +311,7 @@ const Checkout = () => {
                               {items?.quantity}
                             </span>
                             <img
-                              src={items?.productId?.images[2]?.url}
+                              src={items?.productId?.images[0]?.url}
                               alt=""
                               className="img-fluid"
                             />
@@ -242,6 +348,18 @@ const Checkout = () => {
                   $ {totalAmount ? totalAmount + 5 : "0"}
                 </h5>
               </div>
+             { shippingInfo == null ? shippingInfo == null : 
+               <div style={{ width: "320px" }}>
+               <PayPalButton
+                 className="button"
+                 type="submit"
+                 amount={totalAmount}
+                 onSuccess={onSuccessPaypal}
+                 // onError={"Error"}
+                 // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+               />
+             </div>
+             }
             </div>
           </div>
         </div>

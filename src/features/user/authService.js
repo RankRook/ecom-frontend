@@ -1,6 +1,7 @@
 import axios from "axios";
 import { base_url, config } from "../../utils/axiosConfig";
 
+
 const register = async (userData) => {
   const response = await axios.post(`${base_url}user/register`, userData);
   if (response.data) {
@@ -15,6 +16,26 @@ const login = async (userData) => {
   }
   return response.data;
 };
+
+ const logout = async () => {
+  localStorage.clear();
+  window.location.href = '/login';
+};
+
+
+const updateUser = async (data) => {
+  const response = await axios.put(`${base_url}user/edit-user`, data, config);
+  if (response.data) {
+    return response.data;
+  }
+};
+
+const getUser = async()=>{
+  const response = await axios.get(`${base_url}user/use-info`, config);
+  if (response.data) {
+    return response.data;
+  }
+}
 
 const getUserWishList = async () => {
   const response = await axios.get(`${base_url}user/wishlist`, config);
@@ -57,6 +78,53 @@ const updateProdFromCart = async (cartDetail) => {
   }
 };
 
+const createOrder = async(orderDetail)=>{
+  const response= await axios.post(`${base_url}user/cart/create-order`, orderDetail,config)
+  if(response.data){
+    return response.data
+  }
+}
+
+export const getConfig = async () => {
+  const res = await axios.get(`${base_url}user/checkout/config`)
+  return res.data
+}
+
+const getUserOrders = async()=>{
+  const response = await axios.get(`${base_url}user/getmyorders`,config)
+  if(response.data){
+    return response.data
+  }
+}
+
+const getOrder = async (id) => {
+  const response = await axios.get(`${base_url}user/getaorder/${id}`, config);
+  return response.data;
+};
+
+
+const forgotPassword = async(data)=>{
+  const response = await axios.post(`${base_url}user/forgot-password-token`,data)
+  if(response.data){
+    return response.data
+  }
+}
+
+const resetPass = async(data)=>{
+  const response = await axios.put(`${base_url}user/reset-password/${data.token}`,{password: data?.password})
+  if(response.data){
+    return response.data
+  }
+}
+
+const emptyCart = async()=>{
+  const response = await axios.delete(`${base_url}user/empty-cart`,config)
+  if(response.data){
+    return response.data
+  }
+}
+
+
 export const authService = {
   register,
   login,
@@ -64,5 +132,14 @@ export const authService = {
   addToCart,
   getCart,
   removeCart,
+  createOrder,
+  emptyCart,
   updateProdFromCart,
+  getUserOrders,
+  updateUser,
+  forgotPassword,
+  resetPass,
+  getUser,
+  logout,
+  getOrder
 };

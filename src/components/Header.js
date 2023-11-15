@@ -1,22 +1,23 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import { getUserCart, logout } from "../features/user/authSlice";
+import { getProduct } from "../features/products/productSlice";
 
 const Header = ({ history }) => {
   // Get the history object from React Router
-  const token = localStorage.getItem("token");
-  // Function to handle logout
-  const handleLogout = () => {
-    // Remove the token from localStorage
-    localStorage.removeItem("token");
-    // Redirect the user to the login page
-    history.push("/login");
-  };
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const authState = useSelector((state) => state.auth);
+  const [paginate, setPaginate] = useState(true);
   const [total, setTotal] = useState(null);
+  const [productOpt, setProductOpt] = useState([]);
   const cartState = useSelector((state) => state?.auth?.cartProducts);
+  const productState = useSelector((state) => state?.product?.product);
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < cartState?.length; index++) {
@@ -26,6 +27,29 @@ const Header = ({ history }) => {
       setTotal(sum);
     }
   }, [cartState]);
+  
+  useEffect(() => {
+    getCart();
+  }, []);
+
+  const getCart = () => {
+    dispatch(getUserCart());
+  };
+
+  useEffect(() => {
+    let data = [];
+    for (let index = 0; index < productState?.length; index++) {
+      const element = productState[index];
+      data.push({ id: index, prod: element?._id, name: element?.title });
+    }
+    setProductOpt(data);
+  }, [productState]);
+
+  const handleLogout = () => {
+    // localStorage.clear();
+    // window.location.reload();
+    dispatch(logout());
+  };
 
   return (
     <>
@@ -61,12 +85,18 @@ const Header = ({ history }) => {
             </div>
             <div className="col-5">
               <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control py-2"
-                  placeholder="Search Product ..."
-                  aria-label="Search Product ..."
-                  aria-describedby="basic-addon2"
+                <Typeahead
+                  id="pagination-example"
+                  onPaginate={() => console.log("Results paginated")}
+                  onChange={(selected)=>{
+                    navigate(`/product/${selected[0]?.prod}`)
+                    dispatch(getProduct(selected[0]?.prod))
+                  }}
+                  options={productOpt}
+                  labelKey = {"name"}
+                  minLength={2}
+                  paginate={paginate}
+                  placeholder="Search for Products here..."
                 />
                 <span className="input-group-text p-3" id="basic-addon2">
                   <BsSearch className="fs-8" />
@@ -76,7 +106,7 @@ const Header = ({ history }) => {
             <div className="col-5">
               <div className="header-upper-links d-flex align-items-center justify-content-between">
                 <div>
-                  <Link
+                  {/* <Link
                     to="compareproduct"
                     className="d-flex align-items-center gap-10"
                   >
@@ -84,7 +114,7 @@ const Header = ({ history }) => {
                     <p className="mb-0">
                       Compare <br /> Product
                     </p>
-                  </Link>
+                  </Link> */}
                 </div>
                 <div>
                   <Link
@@ -97,37 +127,31 @@ const Header = ({ history }) => {
                     </p>
                   </Link>
                 </div>
-                {token ? (
-                  // Render the Logout link if a token exists
-                  <div>
-                    <Link
-                      to="#"
-                      className="d-flex align-items-center gap-10"
-                      onClick={handleLogout}
-                    >
-                      <img src="images\user.svg" alt="logout" />
-                      <p className="mb-0">Logout</p>
-                    </Link>
-                  </div>
-                ) : (
-                  // Render the Login link if no token exists
-                  <div>
-                    <Link
-                      to="login"
-                      className="d-flex align-items-center gap-10"
-                    >
-                      <img src="images\user.svg" alt="user" />
+                <div>
+                  <Link
+                    to={authState?.user === null ? "/login" : "/profile"}
+                    className="d-flex align-items-center gap-10"
+                  >
+                    <img src="images\user.svg" alt="user" />
+                    {authState?.user === null ? (
                       <p className="mb-0">
                         Login <br /> MyAccount
                       </p>
-                    </Link>
-                  </div>
-                )}
+                    ) : (
+                      <p className="mb-0">
+                        Welcome {authState?.user?.firstname}
+                      </p>
+                    )}
+                  </Link>
+                </div>
+
                 <div>
                   <Link to="cart" className="d-flex align-items-center gap-10">
                     <img src="images\cart.svg" alt="cart" />
                     <div className="d-flex flex-column">
-                      <span className="badge bg-white text-dark">{cartState?.length ? cartState?.length : 0}</span>
+                      <span className="badge bg-white text-dark">
+                        {cartState?.length ? cartState?.length : 0}
+                      </span>
                       <p className="mb-0">$ {total ? total : 0}</p>
                     </div>
                   </Link>
@@ -176,8 +200,16 @@ const Header = ({ history }) => {
                   <div className="d-flex align-items-center gap-15">
                     <NavLink to="/">Home</NavLink>
                     <NavLink to="/product">Our Store</NavLink>
+                    <NavLink to="/my-orders">My Orders</NavLink>
                     <NavLink to="/blogs">Blogs</NavLink>
                     <NavLink to="/contact">Contact</NavLink>
+                    <button
+                      onClick={handleLogout}
+                      className="border border-0 bg-transparent text-white text-uppercase"
+                      type="button"
+                    >
+                      Log Out
+                    </button>
                   </div>
                 </div>
               </div>

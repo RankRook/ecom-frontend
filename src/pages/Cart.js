@@ -14,10 +14,10 @@ import {
 
 const Cart = () => {
   const [prodUpdateDetail, setProdUpdateDetail] = useState(null);
-   const [totalAmount, setTotalAmount] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(null);
   const userCartState = useSelector((state) => state?.auth?.cartProducts);
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     if (prodUpdateDetail !== null) {
       dispatch(
@@ -31,6 +31,7 @@ const Cart = () => {
       }, 100);
     }
   }, [prodUpdateDetail]);
+
 
   useEffect(() => {
     dispatch(getUserCart());
@@ -73,8 +74,10 @@ const Cart = () => {
                     >
                       <h4 className="cart-col-1 gap-15 d-flex align-items-center">
                         <div className="w-25">
+                          
                           <img
-                            src="https://thelightmusic.net/wp-content/uploads/2020/04/267896bf64449d1ac455_49268178378_o.jpg"
+                            // src="https://thelightmusic.net/wp-content/uploads/2020/04/267896bf64449d1ac455_49268178378_o.jpg"
+                            src={item?.productId?.images?.[0]?.url}
                             className="img-fluid"
                             alt="product img"
                           />
@@ -94,9 +97,9 @@ const Cart = () => {
                             min={1}
                             max={10}
                             value={
-                              prodUpdateDetail?.quantity
-                                ? prodUpdateDetail?.quantity
-                                : item?.quantity
+                              // prodUpdateDetail?.quantity
+                              //   ? prodUpdateDetail?.quantity
+                                 item?.quantity
                             }
                             onChange={(e) => {
                               setProdUpdateDetail({

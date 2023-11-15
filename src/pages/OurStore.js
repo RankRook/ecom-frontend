@@ -8,17 +8,43 @@ import ProductCard from "../components/ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../features/products/productSlice";
 
-
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
-  const productState = useSelector((state)=> state?.product?.product)
+  const productState = useSelector((state) => state?.product?.product);
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  //Filter State
+  const [brand, setBrand] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [tag, setTag] = useState(null);
+  const [minPrice, setMinPrice] = useState(null)
+  const [maxPrice, setMaxPrice] = useState(null)
+  const [sort, setSort] = useState(null)
+
+  useEffect(() => {
+    let newBrand = [];
+    let newCategories = [];
+    let newTags = [];
+    for (let i = 0; i < productState.length; i++) {
+      const element = productState[i];
+      newBrand.push(element.brand);
+      newCategories.push(element.category);
+      newTags.push(element.tags);
+    }
+    setCategories(newCategories);
+    setTags(newTags);
+    setBrands(newBrand);
+  }, [productState]);
+
 
   const dispatch = useDispatch();
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [sort, tag, brand, category, minPrice, maxPrice]);
   const getProducts = () => {
-    dispatch(getAllProducts());
+    dispatch(getAllProducts({sort, tag, brand, category, minPrice, maxPrice}));
   };
   return (
     <>
@@ -32,65 +58,18 @@ const OurStore = () => {
                 <h3 className="filter-title">Shop By Categories</h3>
                 <div>
                   <ul className="ps-0">
-                    <li>Guitar</li>
-                    <li>Piano</li>
-                    <li>Drum</li>
+                    {categories &&
+                      [...new Set(categories)].map((item, index) => (
+                        <li key={index} onClick={() => setCategory(item)}>
+                          {item}
+                        </li>
+                      ))}
                   </ul>
                 </div>
               </div>
               <div className="filter-card mb-3">
                 <h3 className="filter-title">Filter By</h3>
                 <div>
-                  <h5 className="sub-title">Availablity</h5>
-                  <div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id=""
-                      />
-                      <label class="form-check-label" htmlFor="">
-                        In Stock (1)
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id=""
-                      />
-                      <label class="form-check-label" htmlFor="">
-                        Out of Stock
-                      </label>
-                    </div>
-                  </div>
-                  <h5 className="sub-title">Availablity</h5>
-                  <div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id=""
-                      />
-                      <label class="form-check-label" htmlFor="">
-                        In Stock (1)
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id=""
-                      />
-                      <label class="form-check-label" htmlFor="">
-                        Out of Stock
-                      </label>
-                    </div>
-                  </div>
                   <h5 className="sub-title">Price</h5>
                   <div className="d-flex align-items-center gap-10">
                     <div className="form-floating mb-3">
@@ -99,6 +78,7 @@ const OurStore = () => {
                         className="form-control py-1"
                         id="floatingInput"
                         placeholder="From"
+                        onChange={(e)=>setMinPrice(e.target.value)}
                       />
                       <label for="floatingInput">From</label>
                     </div>
@@ -108,6 +88,7 @@ const OurStore = () => {
                         className="form-control py-1"
                         id="floatingInput1"
                         placeholder="To"
+                        onChange={(e)=>setMaxPrice(e.target.value)}
                       />
                       <label for="floatingInput1">To</label>
                     </div>
@@ -115,39 +96,40 @@ const OurStore = () => {
                 </div>
               </div>
               <div className="filter-card mb-3">
+                <h3 className="filter-title">Product Brands</h3>
+                <div>
+                  <div className="product-tags d-flex flex-wrap align-content-center gap-10">
+                    {brands &&
+                      [...new Set(brands)].map((item, index) => {
+                        return (
+                          <span
+                            key={index}
+                            onClick={() => setBrand(item)}
+                            className="badge bg-light text-muted fst-italic py-2 px-3"
+                          >
+                            {item}
+                          </span>
+                        );
+                      })}
+                  </div>
+                </div>
+              </div>
+              <div className="filter-card mb-3">
                 <h3 className="filter-title">Product Tags</h3>
                 <div>
                   <div className="product-tags d-flex flex-wrap align-content-center gap-10">
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Acoustic
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Piano
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Classic
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Ukulele
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Capo
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Acoustic
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Piano
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Classic
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Ukulele
-                    </span>
-                    <span className="badge bg-light text-muted fst-italic  py-2 px-3">
-                      Capo
-                    </span>
+                    {tags &&
+                      [...new Set(tags)].map((item, index) => {
+                        return (
+                          <span
+                            key={index}
+                            onClick={() => setTag(item)}
+                            className="badge bg-light text-muted fst-italic py-2 px-3"
+                          >
+                            {item}
+                          </span>
+                        );
+                      })}
                   </div>
                 </div>
               </div>
@@ -159,27 +141,24 @@ const OurStore = () => {
                     <p className="mb-0 d-block" style={{ width: "100px" }}>
                       Sort By:
                     </p>
-                    <select name="" className="form-control form-select" id="">
-                      <option value="manual" selected="selected">
-                        Featured
-                      </option>
-                      <option value="best-selling" selected="selected">
-                        Best Selling
-                      </option>
-                      <option value="title-ascending" selected="selected">
+                    <select name="" className="form-control form-select" id="" onChange={(e)=>setSort(e.target.value)}>
+                      <option value="title" selected="selected">
                         Alphabetically, A-Z
                       </option>
-                      <option value="title-descending" selected="selected">
+                      <option value="-title" selected="selected">
                         Alphabetically, Z-A
                       </option>
-                      <option value="price-ascending" selected="selected">
+                      <option value="price" selected="selected">
                         Price, Low to High
                       </option>
-                      <option value="price-decending" selected="selected">
+                      <option value="-price" selected="selected">
                         Price, High to Low
                       </option>
-                      <option value="created-ascending" selected="selected">
+                      <option value="created" selected="selected">
                         Date, old to new
+                      </option>
+                      <option value="-created" selected="selected">
+                        Date, new to old 
                       </option>
                     </select>
                   </div>
@@ -226,7 +205,10 @@ const OurStore = () => {
               </div>
               <div className="product-list pb-5">
                 <div className="d-flex gap-10 flex-wrap">
-                  <ProductCard data={productState ? productState : []} grid={grid} />
+                  <ProductCard
+                    data={productState ? productState : []}
+                    grid={grid}
+                  />
                 </div>
               </div>
             </div>
@@ -235,7 +217,6 @@ const OurStore = () => {
       </div>
     </>
   );
-}
+};
 
-export default OurStore
-
+export default OurStore;
