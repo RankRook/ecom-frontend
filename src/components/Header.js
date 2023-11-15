@@ -5,6 +5,7 @@ import { BsSearch } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
+import { getUserCart, logout } from "../features/user/authSlice";
 import { getProduct } from "../features/products/productSlice";
 
 const Header = ({ history }) => {
@@ -26,6 +27,14 @@ const Header = ({ history }) => {
       setTotal(sum);
     }
   }, [cartState]);
+  
+  useEffect(() => {
+    getCart();
+  }, []);
+
+  const getCart = () => {
+    dispatch(getUserCart());
+  };
 
   useEffect(() => {
     let data = [];
@@ -37,8 +46,9 @@ const Header = ({ history }) => {
   }, [productState]);
 
   const handleLogout = () => {
-    localStorage.clear();
-    window.location.reload();
+    // localStorage.clear();
+    // window.location.reload();
+    dispatch(logout());
   };
 
   return (

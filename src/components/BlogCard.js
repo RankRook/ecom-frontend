@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 
 const BlogCard = (props) => {
   const { id, title, description, date, image } = props;
+  console.log(image)
   return (
     <div className="blog-card">
       <div className="card-image">
         <img
-          src={image?.[0]?.url }
+          src={image}
           className="img-fluid w-100"
           alt="blog"
         />

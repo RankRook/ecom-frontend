@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { PayPalButton } from "react-paypal-button-v2";
 import { object, string, number, date, InferType } from "yup";
-import { createAnOrder } from "../features/user/authSlice";
+import { createAnOrder, emptyUserCart, getAUser, resetState } from "../features/user/authSlice";
 import * as authService from "../features/user/authService";
 const Checkout = () => {
   const shippingSchema = object({
@@ -29,8 +29,17 @@ const Checkout = () => {
   const [totalAmountDiscount, setTotalAmountDiscount] = useState(null);
   const [shippingInfo, setShippingInfo] = useState(null);
   const [cartProduct, setCartProduct] = useState(null);
+  const location = useLocation()
+  const userState = useSelector((state) => state?.auth?.info?.getaUser);
+  const getUsertId = location.pathname.split("/")[2];
+  
+  useEffect(() => {
+    getUser();
+  }, []);
 
-
+  const getUser = () => {
+    dispatch(getAUser(getUsertId));
+  };
 
   useEffect(() => {
     let sum = 0;
@@ -63,7 +72,6 @@ const Checkout = () => {
     setCartProduct(items);
   }, []);
 
-  
 
   console.log(cartProduct);
   const addPaypalScript = async () => {
@@ -88,13 +96,14 @@ const Checkout = () => {
   }, []);
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      firstname: "",
-      lastname: "",
-      mobile: "",
-      address: "",
-      country: "",
-      city: "",
+      firstname: userState?.firstname || "",
+      lastname: userState?.lastname || "",
+      mobile: userState?.mobile || "",
+      address: userState?.address || "",
+      country: userState?.country || "",
+      city: userState?.city || "",
     },
     validationSchema: shippingSchema,
     onSubmit: (values) => {
@@ -112,8 +121,13 @@ const Checkout = () => {
         paymentMethod: payment,
         shippingInfo: shippingInfo,
         isPaid: true,
-      })
+      }),
     );
+    setTimeout(() => {
+      navigate("/admin/product-list");
+      dispatch(emptyUserCart())
+      dispatch(resetState());
+    }, 300);
   };
 
   console.log(onSuccessPaypal);
@@ -297,7 +311,7 @@ const Checkout = () => {
                               {items?.quantity}
                             </span>
                             <img
-                              src={items?.productId?.images[2]?.url}
+                              src={items?.productId?.images[0]?.url}
                               alt=""
                               className="img-fluid"
                             />

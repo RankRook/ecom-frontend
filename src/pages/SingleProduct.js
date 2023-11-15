@@ -10,6 +10,8 @@ import ReactStars from "react-stars";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
 import ReactImageZoom from "react-image-zoom";
+import ReactImageMagnify from "react-image-magnify";
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addRating, getProduct } from "../features/products/productSlice";
@@ -29,9 +31,10 @@ const SingleProduct = () => {
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [currentImage, setCurrentImage] = useState("");
 
-  const userState = useSelector((state) => state?.auth.user)
-  const fullname = userState?.firstname + " " + userState?.lastname
+  const userState = useSelector((state) => state?.auth.user);
+  const fullname = userState?.firstname + " " + userState?.lastname;
 
   const addRatingToProduct = () => {
     if (star === null) {
@@ -42,11 +45,16 @@ const SingleProduct = () => {
       return false;
     } else {
       dispatch(
-        addRating({ star: star, comment: comment, prodId: getProductId, fullname: fullname })
+        addRating({
+          star: star,
+          comment: comment,
+          prodId: getProductId,
+          fullname: fullname,
+        })
       );
-      // setTimeout(() => {
-      //   dispatch(getAProduct(getProductId));
-      // }, 100);
+      setTimeout(() => {
+        dispatch(getAProduct(getProductId));
+      }, 100);
     }
     return false;
   };
@@ -79,43 +87,65 @@ const SingleProduct = () => {
     }, 200);
   };
 
+
+  useEffect(() => {
+    setCurrentImage(productState?.images[0]?.url || "");
+  }, [productState]);
+  console.log(currentImage);
+
+  console.log(productState?.images[0]?.url)
+
   const props = {
     width: 600,
     height: 600,
     zoomWidth: 600,
-    // img: productState?.images[1].url ? productState?.images[1]?.url : "",
-    img : "https://nhaccutienmanh.vn/wp-content/uploads/2021/07/dan-guitar-acoustic-yamaha-f-370-33-768x768.jpg"
-  };
-  const copyToClipboard = (text) => {
-    console.log("text", text);
-    var textField = document.createElement("textarea");
-    textField.innerText = text;
-    document.body.appendChild(textField);
-    textField.select();
-    document.execCommand("copy");
-    textField.remove();
+    img:  productState?.images[0]?.url || productState?.images[1]?.url || ""
   };
 
   return (
     <>
+
       <Meta title={"Dynamic Product Name"} />
       <BreadCrumb title={productState?.title} />
       <div className="main-product-wrapper home-wrapper-2 py-5">
         <div className="container-xxl">
           <div className="row">
-            <div className="col-6">
-              <div className="main-product-image">
-                <div><ReactImageZoom {...props} /></div>
+            <div className="col-6" >
+              <div className="main-product-image" >
+                <div className="main-product-image-main" style={{width:"500px",height:"500px"}}>
+                <ReactImageMagnify
+                  {...{
+                    smallImage: {
+                      isFluidWidth: true,
+                      width: 1040,
+                      height: 1062,
+                      src: currentImage
+                    },
+                    largeImage: {
+                      src: currentImage,
+                      width: 836,
+                      height: 1100,
+                    },
+                    lensStyle:{backgroundColor:'rgba(0,0,0,.2)'}
+                  }}
+                />
+                {/* <ReactImageZoom {...props} /> */}
+                </div>
+                
               </div>
-              <div className="other-product-images d-flex gap-30">
-              
+              <div className="other-product-images gap-30">
                 <div>
-                  {/* {productState &&
+                  {productState &&
                     productState?.images.map((item, index) => {
                       return (
-                        <img src="https://nhaccutienmanh.vn/wp-content/uploads/2021/07/dan-guitar-acoustic-yamaha-f-370-33-768x768.jpg" className="img-fluid" alt="" />
+                        <img
+                          src={item?.url}
+                          className="img-fluid"
+                          alt=""
+                          onClick={() => setCurrentImage(item?.url)}
+                        />
                       );
-                    })} */}
+                    })}
                 </div>
               </div>
             </div>
@@ -159,10 +189,14 @@ const SingleProduct = () => {
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Available: </h3>
-                    <p class="product-data">IN Stock</p>
+                    {productState?.quantity > 0 ? (
+                      <p class="product-data">In Stock</p>
+                    ) : (
+                      <p class="product-data">Out of Stock</p>
+                    )}
                   </div>
                   <div className="d-flex gap-15 align-items-center flex-row my-2 mb-3">
-                    {alreadyAddCart === false && (
+                    {alreadyAddCart === false && productState?.quantity > 0 && (
                       <>
                         <h3 className="product-heading">Quantity: </h3>
                         <div>
@@ -179,32 +213,39 @@ const SingleProduct = () => {
                         </div>
                       </>
                     )}
+
                     <div
                       className={
-                        alreadyAddCart
+                        alreadyAddCart || productState?.quantity === 0
                           ? "mb-0"
                           : "d-flex align-item-center gap-15 ms-2"
                       }
                     >
-                      <button
-                        className="button border-0"
-                        type="button"
-                        onClick={() => {
-                          alreadyAddCart ? navigate("/cart") : uploadCart();
-                        }}
-                      >
-                        {alreadyAddCart ? "Go to cart" : "Add to cart"}
-                      </button>
-                      {/* <button className="button signup">Buy It Now</button> */}
+                      {productState?.quantity > 0 && (
+                        <button
+                          className="button border-0"
+                          type="button"
+                          onClick={() => {
+                            alreadyAddCart ? navigate("/cart") : uploadCart();
+                          }}
+                        >
+                          {alreadyAddCart ? "Go to cart" : "Add to cart"}
+                        </button>
+                      )}
+                      {productState?.quantity === 0 && (
+                        <button
+                          className="button border-0"
+                          type="button"
+                          onClick={() => {
+                            navigate("/cart");
+                          }}
+                        >
+                          This product is not available
+                        </button>
+                      )}
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-15">
-                    <div>
-                      <a href="">
-                        <TbGitCompare className="fs-5 me-2" />
-                        Add to Compare
-                      </a>
-                    </div>
                     <div>
                       <a href="">
                         <AiOutlineHeart className="fs-5 me-2" />
@@ -218,7 +259,7 @@ const SingleProduct = () => {
                       Free Shipping and returns available on all orders!
                     </p>
                   </div>
-                  <div className="d-flex gap-10 align-items-center my-3">
+                  {/* <div className="d-flex gap-10 align-items-center my-3">
                     <h3 className="product-heading">Copy Product Link </h3>
                     <p class="product-data">
                       <a
@@ -232,7 +273,7 @@ const SingleProduct = () => {
                         Copy Product Link
                       </a>
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -291,7 +332,6 @@ const SingleProduct = () => {
                 </div>
                 <div id="review" className="review-form py-4">
                   <h4 className="mb-2">Write A Review</h4>
-
                   <div className="">
                     <ReactStars
                       count={5}

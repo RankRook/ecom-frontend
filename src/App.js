@@ -21,6 +21,7 @@ import Profile from "./pages/Profile";
 import { PrivateRoutes } from "./routing/PrivateRoute";
 import { OpenRoutes } from "./routing/OpenRoute";
 import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
 function App() {
   return (
     <BrowserRouter>
@@ -75,6 +76,14 @@ function App() {
             element={
               <PrivateRoutes>
                 <Orders />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="order/:id"
+            element={
+              <PrivateRoutes>
+                <OrderDetail />
               </PrivateRoutes>
             }
           />
