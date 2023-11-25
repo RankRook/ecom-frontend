@@ -16,13 +16,17 @@ const ResetPassword = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const getToken = location.pathname.split("/") / [2];
 
+
+  console.log(location.pathname.split("/") / [2])
   const formik = useFormik({
     initialValues: {
       password: "",
     },
     validationSchema: resetPasswordSchema,
+    
     onSubmit: (values) => {
       dispatch(resetPassword({ token: getToken, password: values.password }));
       navigate("/login");

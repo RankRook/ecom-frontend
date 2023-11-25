@@ -156,6 +156,7 @@ export const resetPassword = createAsyncThunk(
   "user/password/reset",
   async (data, thunkAPI) => {
     try {
+
       return await authService.resetPass(data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -228,7 +229,10 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
-        state.message = action.response.data.message;
+        state.message = action.error;
+        if (state.isError === true) {
+          toast.info("Invalid ");
+        }
       })
       .addCase(getUserProductWishList.pending, (state) => {
         state.isLoading = true;

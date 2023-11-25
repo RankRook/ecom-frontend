@@ -23,7 +23,6 @@ const Profile = () => {
   const userState = useSelector((state) => state?.auth?.info?.getaUser);
   const getUsertId = location.pathname.split("/")[2];
 
-console.log(userState)
 
   useEffect(() => {
     getUser();
