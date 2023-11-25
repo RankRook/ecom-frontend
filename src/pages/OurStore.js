@@ -11,12 +11,12 @@ import { getAllProducts } from "../features/products/productSlice";
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
   const productState = useSelector((state) => state?.product?.product);
-  const [brands, setBrands] = useState([]);
+  const [brand, setBrand] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
 
   //Filter State
-  const [brand, setBrand] = useState(null);
+  const [brands, setBrands] = useState(null);
   const [category, setCategory] = useState(null);
   const [tag, setTag] = useState(null);
   const [minPrice, setMinPrice] = useState(null)
@@ -29,22 +29,22 @@ const OurStore = () => {
     let newTags = [];
     for (let i = 0; i < productState.length; i++) {
       const element = productState[i];
-      newBrand.push(element.brand);
+      newBrand.push(element.brands);
       newCategories.push(element.category);
       newTags.push(element.tags);
     }
     setCategories(newCategories);
     setTags(newTags);
-    setBrands(newBrand);
+    setBrand(newBrand);
   }, [productState]);
 
 
   const dispatch = useDispatch();
   useEffect(() => {
     getProducts();
-  }, [sort, tag, brand, category, minPrice, maxPrice]);
+  }, [sort, tag, brands, category, minPrice, maxPrice]);
   const getProducts = () => {
-    dispatch(getAllProducts({sort, tag, brand, category, minPrice, maxPrice}));
+    dispatch(getAllProducts({sort, tag, brands, category, minPrice, maxPrice}));
   };
   return (
     <>
@@ -99,13 +99,14 @@ const OurStore = () => {
                 <h3 className="filter-title">Product Brands</h3>
                 <div>
                   <div className="product-tags d-flex flex-wrap align-content-center gap-10">
-                    {brands &&
-                      [...new Set(brands)].map((item, index) => {
+                    {brand &&
+                      [...new Set(brand)].map((item, index) => {
                         return (
                           <span
                             key={index}
-                            onClick={() => setBrand(item)}
-                            className="badge bg-light text-muted fst-italic py-2 px-3"
+                            onClick={() => setBrands(brands === item ? null : item)}
+                            // className="badge bg-light text-muted fst-italic py-2 px-3"
+                             className={`btn ${brands === item ? "btn-primary" : "btn-light"} fst-italic py-2 px-3`}
                           >
                             {item}
                           </span>
@@ -123,8 +124,9 @@ const OurStore = () => {
                         return (
                           <span
                             key={index}
-                            onClick={() => setTag(item)}
-                            className="badge bg-light text-muted fst-italic py-2 px-3"
+                            onClick={() => setTag(tag === item ? null : item)}
+                            // className="badge bg-light text-muted fst-italic py-2 px-3"
+                            className={`btn ${tag === item ? "btn-primary" : "btn-light"} fst-italic py-2 px-3`}
                           >
                             {item}
                           </span>

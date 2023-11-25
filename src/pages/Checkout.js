@@ -124,7 +124,7 @@ const Checkout = () => {
       }),
     );
     setTimeout(() => {
-      navigate("/admin/product-list");
+      navigate("/my-orders");
       dispatch(emptyUserCart())
       dispatch(resetState());
     }, 300);

@@ -36,30 +36,8 @@ const SingleProduct = () => {
   const userState = useSelector((state) => state?.auth.user);
   const fullname = userState?.firstname + " " + userState?.lastname;
 
-  const addRatingToProduct = () => {
-    if (star === null) {
-      toast.error("Please add star rating");
-      return false;
-    } else if (comment === null) {
-      toast.error("Please Write Review About the Product");
-      return false;
-    } else {
-      dispatch(
-        addRating({
-          star: star,
-          comment: comment,
-          prodId: getProductId,
-          fullname: fullname,
-        })
-      );
-      setTimeout(() => {
-        dispatch(getAProduct(getProductId));
-      }, 100);
-    }
-    return false;
-  };
   useEffect(() => {
-    getAProduct();
+    getAProduct(getProductId);
   }, []);
 
   useEffect(() => {
@@ -87,6 +65,28 @@ const SingleProduct = () => {
     }, 200);
   };
 
+  const addRatingToProduct = () => {
+    if (star === null) {
+      toast.error("Please add star rating");
+      return false;
+    } else if (comment === null) {
+      toast.error("Please Write Review About the Product");
+      return false;
+    } else {
+      dispatch(
+        addRating({
+          star: star,
+          comment: comment,
+          prodId: getProductId,
+          fullname: fullname,
+        })
+      );
+      setTimeout(() => {
+        dispatch(getProduct(getProductId));
+      }, 100);
+    }
+    return false;
+  };
 
   useEffect(() => {
     setCurrentImage(productState?.images[0]?.url || "");
@@ -177,11 +177,11 @@ const SingleProduct = () => {
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Brand: </h3>
-                    <p class="product-data">{productState?.brand}</p>
+                    <p class="product-data">{productState?.brands}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Category: </h3>
-                    <p class="product-data">{productState?.category}</p>
+                    <p class="product-data">{productState?.bcategorie}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Tags: </h3>
@@ -369,7 +369,7 @@ const SingleProduct = () => {
                 </div>
                 <div className="reviews mt-4">
                   {productState &&
-                    productState?.ratings1?.map((item, index) => {
+                    productState?.ratings?.map((item, index) => {
                       return (
                         <div key={index} className="review">
                           <div className="d-flex gap-10 align-items-center">
