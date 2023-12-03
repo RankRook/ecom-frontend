@@ -4,6 +4,8 @@ import ReactStars from "react-stars";
 
 const SpecialProduct = (props) => {
   const { title, brand, totalrating, price, sold, quantity, id, image } = props;
+  console.log(quantity)
+  console.log("sold",sold)
   return (
     <div className="col-6 mb-3">
       <div className="special-product-card">
@@ -52,6 +54,7 @@ const SpecialProduct = (props) => {
                   aria-valuemax={sold + quantity}
                 ></div>
               </div>
+
             </div>
             <Link className="button" to={"/product/" + id}>
               View to Detail

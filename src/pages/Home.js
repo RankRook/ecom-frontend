@@ -66,50 +66,48 @@ const Home = () => {
               <div className="d-flex flex-wrap gap-10 justify-content-between align-items">
                 <div className="small-banner position-relative">
                   <img
-                    src="images\catbanner-01.jpg"
+                    src="images\guitarbanner1.jpg"
                     className="img-fluid rounded-3"
                     alt="main banner"
                   />
                   <div className="small-banner-content position-absolute">
-                    <h4>SUPERCHANGED FOR PROS</h4>
-                    <h5>Guitars LakeWood</h5>
-                    <p>From $999</p>
+                    <h4>SUPER DISCOUNT IN THIS EVENT</h4>
+                    <h5>Coupon: SPECIAL</h5> <h5>Discount: 15%</h5>
                   </div>
                 </div>
                 <div className="small-banner position-relative">
                   <img
-                    src="images\catbanner-02.jpg"
+                    src="images\guitarbanner2.jpg"
                     className="img-fluid rounded-3"
                     alt="main banner"
                   />
                   <div className="small-banner-content position-absolute">
-                    <h4>SUPERCHANGED FOR PROS</h4>
-                    <h5>Guitars LakeWood</h5>
-                    <p>From $999</p>
+                    <h4>SUPER DISCOUNT IN THIS EVENT</h4>
+                    <h5>Coupon: HOT007</h5> <h5>Discount: 20%</h5>
                   </div>
                 </div>
                 <div className="small-banner position-relative">
                   <img
-                    src="images\catbanner-03.jpg"
+                    src="images\guitarbanner5.jpg"
                     className="img-fluid rounded-3"
                     alt="main banner"
                   />
                   <div className="small-banner-content position-absolute">
-                    <h4>SUPERCHANGED FOR PROS</h4>
-                    <h5>Guitars LakeWood</h5>
-                    <p>From $999</p>
+                    <h4>SUPER DISCOUNT IN THIS EVENT</h4>
+                    <h5>Coupon: FANTASIC</h5>
+                    <h5>Discount: 10 %</h5>
                   </div>
                 </div>
                 <div className="small-banner position-relative">
                   <img
-                    src="images\catbanner-04.jpg"
+                    src="images\guitarbanner4.jpg"
                     className="img-fluid rounded-3"
                     alt="main banner"
                   />
                   <div className="small-banner-content position-absolute">
-                    <h4>SUPERCHANGED FOR PROS</h4>
-                    <h5>Guitars LakeWood</h5>
-                    <p>From $999</p>
+                    <h4>SUPER DISCOUNT IN THIS EVENT</h4>
+                    <h5>Coupon: WINTER</h5>
+                    <h5>Discount: 21 %</h5>
                   </div>
                 </div>
               </div>
@@ -171,111 +169,11 @@ const Home = () => {
               <h3 className="section-heading">Featured Products</h3>
             </div>
             {productState &&
-              productState?.map((item, index) => {
-                let featuredCount = 0;
-                if (item.tags === "featured" && featuredCount  < 4) {
-                  return (
-                    <div key={index} className={`${"col-3"}`}>
-                      <Link className="product-card position-relative">
-                        <div className="wishlist-icon position-absolute">
-                          <button
-                            className="border-0 bg-transparent"
-                            onClick={(e) => {
-                              addToWish(item?._id);
-                            }}
-                          >
-                            <img src="images/wish.svg" alt="wishlist" />
-                          </button>
-                        </div>
-                        <div className="product-image ">
-                          <img
-                            width={160}
-                            height={160}
-                            src={item?.images?.[0]?.url}
-                            className="img-fluid mx-auto"
-                            alt="product-image"
-                          />
-                          <img
-                            width={160}
-                            height={160}
-                            src={item?.images?.[1]?.url}
-                            className="img-fluid mx-auto"
-                            alt="product image"
-                          />
-                        </div>
-                        <div className="product-details">
-                          <h6 className="brand">{item?.brand}</h6>
-                          <h5 className="product-title">{item?.title}</h5>
-                          <ReactStars
-                            count={5}
-                            size={24}
-                            value={item?.totalRating?.toString()}
-                            edit={false}
-                            activeColor="#ffd700"
-                          />
-                          <p className="price">$ {item?.price}</p>
-                        </div>
-                        <div className="action-bar position-absolute">
-                          <div className="d-flex flex-column gap-15">
-                            <Link
-                              to={"/product/" + item?._id}
-                              className="border-0 bg-transparent"
-                            >
-                              <img src="images/view.svg" alt="view" />
-                            </Link>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                  );
-                }
-              })}
-          </div>
-        </div>
-      </section>
-
-      <section className="special-wrapper py-5 home-wrapper-2">
-        <div className="container-xxl">
-          <div className="row">
-            <div className="col-12">
-              <h3 className="section-heading">Special Products</h3>
-            </div>
-          </div>
-          <div className="row ">
-            {productState &&
-              productState?.map((item, index) => {
-                let specialCount = 0;
-                if (item.tags === "special" && specialCount  < 2) {
-                    return (
-                      <SpecialProduct
-                        key={index}
-                        id={item?._id}
-                        brand={item?.brand}
-                        title={item?.title}
-                        quantity={item?.quantity}
-                        price={item?.price}
-                        image={item?.images[0]?.url}
-                        totalrating={item?.totalrating.toString()}
-                      />
-                    );
-                  }
-              
-              })}
-          </div>
-        </div>
-      </section>
-
-      <section className="popular-wrapper py-5 home-wrapper-2">
-        <div className="container-xxl">
-          <div className="row ">
-            <div className="col-12">
-              <h3 className="section-heading">Our Popular Products</h3>
-            </div>
-            <div className="row ">
-              {productState &&
-                productState?.map((item, index) => {
-                  let popularCount = 0;
-                    if (item.tags === "popular" && popularCount  < 4) {
+              productState
+                .filter((item) => item.tags === "featured")
+                .slice(0, 4)
+                .map((item, index) => {
+                  if (item.tags === "featured") {
                     return (
                       <div key={index} className={`${"col-3"}`}>
                         <Link className="product-card position-relative">
@@ -289,21 +187,36 @@ const Home = () => {
                               <img src="images/wish.svg" alt="wishlist" />
                             </button>
                           </div>
-                          <div className="product-image ">
-                            <img
-                              width={160}
-                              height={160}
-                              src={item?.images?.[0]?.url}
-                              className="img-fluid mx-auto"
-                              alt="product-image"
-                            />
-                            <img
-                              width={160}
-                              height={160}
-                              src={item?.images?.[1]?.url}
-                              className="img-fluid mx-auto"
-                              alt="product image"
-                            />
+                          <div className="product-image">
+                            {item?.images?.length > 0 && (
+                              <>
+                                <img
+                                  width={400}
+                                  height={400}
+                                  src={item?.images?.[0]?.url}
+                                  className="img-fluid mx-auto"
+                                  alt="product-image"
+                                />
+                                {item?.images?.length > 1 && (
+                                  <img
+                                    width={400}
+                                    height={400}
+                                    src={item?.images?.[1]?.url}
+                                    className="img-fluid mx-auto"
+                                    alt="product image"
+                                  />
+                                )}
+                                {item?.images?.length === 1 && (
+                                  <img
+                                    width={400}
+                                    height={400}
+                                    src={item?.images?.[0]?.url}
+                                    className="img-fluid mx-auto"
+                                    alt="product image"
+                                  />
+                                )}
+                              </>
+                            )}
                           </div>
                           <div className="product-details">
                             <h6 className="brand">{item?.brand}</h6>
@@ -311,7 +224,7 @@ const Home = () => {
                             <ReactStars
                               count={5}
                               size={24}
-                              value={item?.totalRating?.toString()}
+                              value={item?.totalrating?.toString()}
                               edit={false}
                               activeColor="#ffd700"
                             />
@@ -319,32 +232,137 @@ const Home = () => {
                           </div>
                           <div className="action-bar position-absolute">
                             <div className="d-flex flex-column gap-15">
-                              {/* <Link>
-                                <img
-                                  src="images/prodcompare.svg"
-                                  alt="compare"
-                                />
-                              </Link> */}
-                              <Link>
-                                <img
-                                  onClick={() =>
-                                    navigate("/product/" + item?._id)
-                                  }
-                                  src="images/view.svg"
-                                  alt="view"
-                                />
+                              <Link
+                                to={"/product/" + item?._id}
+                                className="border-0 bg-transparent"
+                              >
+                                <img src="images/view.svg" alt="view" />
                               </Link>
-                              {/* <Link>
-                                <img src="images/add-cart.svg" alt="add cart" />
-                              </Link> */}
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    );
+                  }
+                })}
+          </div>
+        </div>
+      </section>
+
+      <section className="special-wrapper py-5 home-wrapper-2">
+        <div className="container-xxl">
+          <div className="row">
+            <div className="col-12">
+              <h3 className="section-heading">Special Products</h3>
+            </div>
+          </div>
+          <div className="row ">
+            {productState &&
+              productState
+                .filter((item) => item.tags === "special")
+                .slice(0, 2)
+                .map((item, index) => {
+                  return (
+                    <SpecialProduct
+                      key={index}
+                      id={item?._id}
+                      brand={item?.brand}
+                      title={item?.title}
+                      quantity={item?.quantity}
+                      sold={item?.sold}
+                      price={item?.price}
+                      image={item?.images[0]?.url}
+                      totalrating={item?.totalrating.toString()}
+                    />
+                  );
+                })}
+          </div>
+        </div>
+      </section>
+
+      <section className="popular-wrapper py-5 home-wrapper-2">
+        <div className="container-xxl">
+          <div className="row ">
+            <div className="col-12">
+              <h3 className="section-heading">Our Popular Products</h3>
+            </div>
+            <div className="row ">
+              {productState &&
+                productState
+                  .filter((item) => item.tags === "popular") // Filter out only items with the tag "featured"
+                  .slice(0, 4) // Take the first 4 items
+                  .map((item, index) => {
+                    return (
+                      <div key={index} className={`${"col-3"}`}>
+                        <Link className="product-card position-relative">
+                          <div className="wishlist-icon position-absolute">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={(e) => {
+                                addToWish(item?._id);
+                              }}
+                            >
+                              <img src="images/wish.svg" alt="wishlist" />
+                            </button>
+                          </div>
+                          <div className="product-image">
+                            {item?.images?.length > 0 && (
+                              <>
+                                <img
+                                  width={400}
+                                  height={400}
+                                  src={item?.images?.[0]?.url}
+                                  className="img-fluid mx-auto"
+                                  alt="product-image"
+                                />
+                                {item?.images?.length > 1 && (
+                                  <img
+                                    width={400}
+                                    height={400}
+                                    src={item?.images?.[1]?.url}
+                                    className="img-fluid mx-auto"
+                                    alt="product image"
+                                  />
+                                )}
+                                {item?.images?.length === 1 && (
+                                  <img
+                                    width={400}
+                                    height={400}
+                                    src={item?.images?.[0]?.url}
+                                    className="img-fluid mx-auto"
+                                    alt="product image"
+                                  />
+                                )}
+                              </>
+                            )}
+                          </div>
+                          <div className="product-details">
+                            <h6 className="brand">{item?.brand}</h6>
+                            <h5 className="product-title">{item?.title}</h5>
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={item?.totalrating?.toString()}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                            <p className="price">$ {item?.price}</p>
+                          </div>
+                          <div className="action-bar position-absolute">
+                            <div className="d-flex flex-column gap-15">
+                              <Link
+                                to={"/product/" + item?._id}
+                                className="border-0 bg-transparent"
+                              >
+                                <img src="images/view.svg" alt="view" />
+                              </Link>
                             </div>
                           </div>
                         </Link>
                       </div>
                     );
                     // }
-                  }
-                })}
+                  })}
             </div>
           </div>
         </div>

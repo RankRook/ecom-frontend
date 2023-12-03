@@ -11,6 +11,7 @@ import { BiArrowBack } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { PayPalButton } from "react-paypal-button-v2";
+import { toast } from "react-toastify";
 import { object, string, number, date, InferType } from "yup";
 import {
   createAnOrder,
@@ -32,8 +33,6 @@ const Checkout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.auth.cartProducts);
-  // const userState = useSelector((state) => state?.auth?.orderedProduct?.order?.shippingInfo);
-  // console.log(userState)
   const [payment, setPayment] = useState("later_money");
   const [sdkReady, setSdkReady] = useState(false);
   const [totalAmount, setTotalAmount] = useState(null);
@@ -44,9 +43,9 @@ const Checkout = () => {
   const userState = useSelector((state) => state?.auth?.info?.getaUser);
   const getUsertId = location.pathname.split("/")[2];
   const totalAmountWithShipping = totalAmount !== null ? totalAmount + 5 : 5;
+  const [couponError, setCouponError] = useState(null);
 
   const base_url = "http://localhost:5000/api/";
-
   const getTokenFromLocalStorage = localStorage.getItem("customer")
     ? JSON.parse(localStorage.getItem("customer"))
     : null;
@@ -96,7 +95,7 @@ const Checkout = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...config.headers, // Include the authorization headers
+          ...config.headers,
         },
         body: JSON.stringify({ coupon: coupon }),
       });
@@ -106,15 +105,14 @@ const Checkout = () => {
       }
       const totalAfterDiscount = await response.json();
       setTotalAmountDiscount(totalAfterDiscount);
+      toast.info("Apply coupon code success")
     } catch (error) {
-      console.error("Error applying coupon:", error.message);
+      setCouponError(toast.info("Invalid or expired coupon")); // Set error message
     }
   };
 
-  console.log(cartProduct);
   const addPaypalScript = async () => {
     const { data } = await authService.getConfig();
-    console.log(data);
     const script = document.createElement("script");
     script.type = "text/javascript";
     script.src = `https://www.paypal.com/sdk/js?client-id=${data}`;
@@ -154,7 +152,10 @@ const Checkout = () => {
     dispatch(
       createAnOrder({
         totalPrice: totalAmount,
-        totalPriceAfterDiscount: totalAmountDiscount,
+        totalPriceAfterDiscount:
+          totalAmountDiscount !== null
+            ? totalAmountDiscount
+            : totalAmountWithShipping,
         orderItems: cartProduct,
         paymentMethod: payment,
         shippingInfo: shippingInfo,
@@ -168,8 +169,6 @@ const Checkout = () => {
     }, 300);
   };
 
-  console.log(onSuccessPaypal);
-
   return (
     <>
       <div className="checkout-wrapper py-5 home-wrapper-2">
@@ -177,7 +176,7 @@ const Checkout = () => {
           <div className="row">
             <div className="col-7">
               <div className="checkout-left-data">
-                <h3 className="website-name">Hien Dep Trai</h3>
+                <h3 className="website-name">Music Store</h3>
                 <nav
                   style={{ "--bs-breadcrumb-divider": ">" }}
                   aria-label="breadcrumb"
@@ -322,6 +321,7 @@ const Checkout = () => {
                     >
                       Apply Coupon
                     </button>
+
                   </div>
 
                   <div className="w-100">

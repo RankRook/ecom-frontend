@@ -8,19 +8,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/authSlice";
 import { useNavigate } from "react-router-dom";
 
-
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const signUpSchema = yup.object({
   firstname: yup.string().required("First name is required"),
   lastname: yup.string().required("Last name should be required"),
   email: yup.string().nullable().email("Email is required"),
-  mobile: yup.number().required("Mobile phone is required"),
-  password: yup.string().required("Password is requird").min(8, "Password must be at least 8 characters long"),
+  mobile: yup
+    .string()
+    .required("required")
+    .matches(phoneRegExp, "Phone number is not valid")
+    .min(10, "too short")
+    .max(10, "too long"),
+  password: yup
+    .string()
+    .required("Password is requird")
+    .min(8, "Password must be at least 8 characters long"),
 });
 
 function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const authState = useSelector(state => state.auth)
+  const authState = useSelector((state) => state.auth);
   const formik = useFormik({
     initialValues: {
       firstname: "",
@@ -30,15 +39,15 @@ function Signup() {
       password: "",
     },
     validationSchema: signUpSchema,
-    onSubmit:(values) => {
-        dispatch(registerUser(values));
+    onSubmit: (values) => {
+      dispatch(registerUser(values));
     },
   });
-  useState(()=>{
-    if(authState.createdUser !== null &&  authState.isError ===false){
-      navigate('/login')
+  useState(() => {
+    if (authState.createdUser !== null && authState.isError === false) {
+      navigate("/login");
     }
-  },[authState])
+  }, [authState]);
   return (
     <>
       <Meta title={"Sign Up"} />
@@ -108,9 +117,10 @@ function Signup() {
                     </div>
                   </div>
                   <div className="mt-1">
-                    <input
+                    <CustomInput
                       type="password"
                       name="password"
+                      placeholder="Password"
                       value={formik.values.password}
                       onChange={formik.handleChange("password")}
                       onBlur={formik.handleBlur("password")}
@@ -126,7 +136,6 @@ function Signup() {
                       </button>
                     </div>
                   </div>
-                  
                 </form>
               </div>
             </div>

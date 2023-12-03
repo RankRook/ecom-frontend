@@ -19,7 +19,7 @@ const loginSchema = yup.object({
 
 function Login() {
   const navigate = useNavigate();
-  const authState = useSelector(state => state.auth)
+  const authState = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
@@ -28,15 +28,16 @@ function Login() {
     },
     validationSchema: loginSchema,
     onSubmit: (values) => {
-      dispatch(loginUser(values)); 
+      dispatch(loginUser(values));
     },
   });
 
-  useEffect(()=>{
-    if(authState.user !== null && authState.isError === false){
-      navigate("/")
+  useEffect(() => {
+    if (authState.user !== null && authState.isError === false) {
+      navigate("/");
+      window.location.reload();
     }
-  },[authState])
+  }, [authState]);
   return (
     <>
       <Meta title={"Login"} />

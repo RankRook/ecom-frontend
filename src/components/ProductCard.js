@@ -12,12 +12,8 @@ const ProductCard = (props) => {
 
   const addToWish = (id) => {
     dispatch(addToWishlist(id));
-    console.log(id)
+    console.log(id);
   };
-
-  // if (!Array.isArray(data)) {
-  //   return <p>No product data available.</p>; // You can render an error message or handle it as needed.
-  // }
   return (
     <>
       {data &&
@@ -41,34 +37,49 @@ const ProductCard = (props) => {
                   </button>
                 </div>
                 {/* <div className="container"> */}
-                  <div className="product-image ">
-                    <img
-                      width={400}
-                      height={400}
-                      src={item?.images?.[0]?.url}
-                      className="img-fluid mx-auto"
-                      alt="product-image"
-                    />
-                    <img
-                      width={400}
-                      height={400}
-                      src={item?.images?.[1]?.url}
-                      className="img-fluid mx-auto"
-                      alt="product image"
-                    />
-                  </div>
+                <div className="product-image">
+                  {item?.images?.length > 0 && (
+                    <>
+                      <img
+                        width={400}
+                        height={400}
+                        src={item?.images?.[0]?.url}
+                        className="img-fluid mx-auto"
+                        alt="product-image"
+                      />
+                      {item?.images?.length > 1 && (
+                        <img
+                          width={400}
+                          height={400}
+                          src={item?.images?.[1]?.url}
+                          className="img-fluid mx-auto"
+                          alt="product image"
+                        />
+                      )}
+                      {item?.images?.length === 1 && (
+                        <img
+                          width={400}
+                          height={400}
+                          src={item?.images?.[0]?.url}
+                          className="img-fluid mx-auto"
+                          alt="product image"
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
                 {/* </div> */}
 
                 <div className="product-details">
                   <h6 className="brand">{item?.brand}</h6>
                   <h5 className="product-title">{item?.title}</h5>
                   <ReactStars
-                    count={5}
-                    size={24}
-                    value={item?.totalRating?.toString()}
-                    edit={false}
-                    activeColor="#ffd700"
-                  />
+                      count={5}
+                      size={24}
+                      value={item?.totalrating?.toString()}
+                      edit={false}
+                      activeColor="#ffd700"
+                    />
                   <p
                     className={`description ${
                       grid === 12 ? "d-block" : "d-none"

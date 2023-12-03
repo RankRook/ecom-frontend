@@ -27,7 +27,7 @@ const Header = ({ history }) => {
       setTotal(sum);
     }
   }, [cartState]);
-  
+
   useEffect(() => {
     getCart();
   }, []);
@@ -88,12 +88,12 @@ const Header = ({ history }) => {
                 <Typeahead
                   id="pagination-example"
                   onPaginate={() => console.log("Results paginated")}
-                  onChange={(selected)=>{
-                    navigate(`/product/${selected[0]?.prod}`)
-                    dispatch(getProduct(selected[0]?.prod))
+                  onChange={(selected) => {
+                    navigate(`/product/${selected[0]?.prod}`);
+                    dispatch(getProduct(selected[0]?.prod));
                   }}
                   options={productOpt}
-                  labelKey = {"name"}
+                  labelKey={"name"}
                   minLength={2}
                   paginate={paginate}
                   placeholder="Search for Products here..."
@@ -166,50 +166,38 @@ const Header = ({ history }) => {
           <div className="row">
             <div className="col-12">
               <div className="menu-bottom d-flex align-items-center gap-30">
-                <div>
-                  <div className="dropdown">
-                    <button
-                      className="btn btn-secondary dropdown-toggle bg-transparent border-0 gap-15 me-5 d-flex align-items-center"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      <img src="images\menu.svg" alt="" />
-                      <span className="me-5 d-inline-block">Categories</span>
-                    </button>
-                    <ul className="dropdown-menu">
-                      <li>
-                        <Link className="dropdown-item text-white" to="">
-                          Action
-                        </Link>
-                      </li>
-                      <li>
-                        <Link className="dropdown-item text-white" to="">
-                          Another action
-                        </Link>
-                      </li>
-                      <li>
-                        <Link className="dropdown-item text-white" to="">
-                          Something else here
-                        </Link>
-                      </li>
-                    </ul>
+                <div className="col-sm-10">
+                  <div className="menu-links">
+                    <div className="d-flex align-items-center gap-15">
+                      <NavLink to="/">Home</NavLink>
+                      <NavLink to="/product">Our Store</NavLink>
+                      <NavLink to="/blogs">Blogs</NavLink>
+                      <NavLink to="/contact">Contact</NavLink>
+                      {authState?.user === null ? (
+                        <p className="mb-0">                         
+                        </p>
+                      ) : (
+                        <NavLink
+                          to="/my-orders"
+                        >My Order</NavLink>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="menu-links">
-                  <div className="d-flex align-items-center gap-15">
-                    <NavLink to="/">Home</NavLink>
-                    <NavLink to="/product">Our Store</NavLink>
-                    <NavLink to="/my-orders">My Orders</NavLink>
-                    <NavLink to="/blogs">Blogs</NavLink>
-                    <NavLink to="/contact">Contact</NavLink>
-                    <button
-                      onClick={handleLogout}
-                      className="border border-0 bg-transparent text-white text-uppercase"
-                      type="button"
-                    >
-                      Log Out
-                    </button>
+
+                <div className="col px-md-5">
+                  <div className="menu-links">
+                    {authState?.user === null ? (
+                      <p className="mb-0"></p>
+                    ) : (
+                      <button
+                        onClick={handleLogout}
+                        className="border border-0 bg-transparent text-white text-uppercase justify-content-end"
+                        type="button"
+                      >
+                        Log Out
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
