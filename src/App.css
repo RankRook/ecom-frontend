@@ -25,7 +25,7 @@ a {
   display: inline-block;
 }
 
-.errors {
+.error {
   color: red !important;
   font-size: 12px !important;
 }
@@ -224,7 +224,7 @@ a {
   font-size: 14px;
   font-weight: 400;
   line-height: 24px;
-  color: var(--color-bf4800);
+  color: var(--color-3b4149);
   margin: 0 0 12px;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -295,14 +295,35 @@ a {
   background-color: white;
   padding: 20px;
   border-radius: 10px;
+  position: relative;
+  overflow: hidden; /* Chắc chắn ảnh sẽ không tràn khỏi khung của div */
 }
+
 
 .blog-card .img {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+
+
+.blog-card .card-image {
+  width: 100%;
+  height: 200px; /* Đảm bảo chiều cao của ảnh là 200px */
+  overflow: hidden; /* Ẩn phần ảnh vượt qua chiều cao của div */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.blog-card .card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Hiển thị ảnh mà không làm thay đổi tỷ lệ khung hình */
+}
+
 .blog-content {
   padding: 15px;
+  height: 200px; /* Đảm bảo chiều cao tối đa cho nội dung */
+  overflow: hidden; /* Ẩn phần nội dung vượt qua chiều cao của div */
 }
 
 .blog-content .date {
@@ -318,18 +339,30 @@ a {
 .blog-content h5 {
   font-size: 18px;
   color: var(--color-131921);
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ẩn phần vượt qua chiều dài và thêm dấu "..." nếu cần */
+  white-space: nowrap; /* Đảm bảo tiêu đề không xuống dòng */
 }
 
 .blog-content p.desc {
   font-size: 13px;
   line-height: 22px;
   color: var(--color-777777);
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ẩn phần vượt qua chiều dài và thêm dấu "..." nếu cần */
+  white-space: nowrap; /* Đảm bảo tiêu đề không xuống dòng */ 
+}
+
+.button.read-more {
+  position: absolute;
+  bottom: 40px;
+  left: 5;
 }
 
 .single-blog-card a {
   font-size: 15px;
   color: var(--color-777777);
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 }
 
 .single-blog-card h3 {
@@ -355,7 +388,6 @@ a {
   width: 100%;
 }
 
-
 .product-card p.description {
   font-size: 13px;
   color: black;
@@ -363,14 +395,15 @@ a {
 }
 
 .product-card .product-image {
-  padding: 10px;
-  max-width: 100%; /* Đảm bảo ảnh không vượt quá kích thước của phần tử cha */
-  max-height: 100%; /* Đảm bảo ảnh không vượt quá kích thước của phần tử cha */
-  height: auto;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  overflow: hidden;
 }
 
 .product-card .product-image img {
-  object-fit: contain;
+  width: 100%;
+  height: 200px; /* Đảm bảo chiều cao cố định cho ảnh */
+  object-fit: cover;
 }
 
 .product-card .product-image > img:last-child {
@@ -387,6 +420,13 @@ a {
 .product-card:hover .action-bar {
   right: 15px;
 }
+
+.product-card .product-details {
+  padding: 15px;
+  height: 150px; /* Đảm bảo chiều cao cố định cho nội dung */
+  overflow: hidden;
+}
+
 .product-card .product-details h6 {
   color: var(--color-bf4800);
   font-size: 13px;
@@ -394,7 +434,11 @@ a {
 .product-card .product-details h5 {
   font-size: 15px;
   color: var(--color-131921);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
 .product-card .product-details p.price {
   font-size: 16px;
   color: var(--color-1c1c1b);
@@ -413,7 +457,10 @@ a {
 
 /*Special Product Part */
 .special-product-card {
-  padding: 20px;
+  padding: 26px;
+  overflow: hidden;
+  width: 100%;
+  height: 90%;
   background-color: white;
   border-radius: 10px;
 }
@@ -556,34 +603,7 @@ a {
 }
 /*Contact Page End */
 
-/*Compare Product */
-.compare-product-card {
-  padding: 20px 15px;
-  background-color: white;
-  border-radius: 20px;
-  border: 1px solid rgb(0, 0, 0, 0.3);
-}
-.compare-product-card .cross {
-  top: 15px;
-  right: 15px;
-  width: 25px;
-  padding: 3px;
-  cursor: pointer;
-}
-.compare-product-details h5.title {
-  font-size: 15px;
-  line-height: 22px;
-  font-weight: 400;
-}
 
-.compare-product-card .product-detail {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0px;
-  border-top: 1px solid rgba(0, 0, 0, 0.25);
-}
-/*Compare Product End */
 
 /*Compare Product */
 .wishlist-card {
@@ -599,10 +619,17 @@ a {
   padding: 3px;
   cursor: pointer;
 }
+
+.wishlist-details {
+  padding: 15px;
+  height: 220px; /* Đảm bảo chiều cao cố định cho nội dung */
+  overflow: hidden;
+}
 .wishlist-details h5.title {
   font-size: 24px;
   line-height: 22px;
   font-weight: 400;
+  
 }
 
 .wishlist-details p {
@@ -872,4 +899,5 @@ p.mb-0.t-review {
   line-height: 19px;
   padding: 25px 0;
 }
+
 /* Shipping page end */

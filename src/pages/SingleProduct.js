@@ -204,7 +204,7 @@ const SingleProduct = () => {
                             type="number"
                             name=""
                             min={1}
-                            max={10}
+                            max={productState?.quantity}
                             className="form-control"
                             style={{ width: "60px", height: "35px" }}
                             onChange={(e) => setQuantity(e.target.value)}
@@ -233,15 +233,13 @@ const SingleProduct = () => {
                         </button>
                       )}
                       {productState?.quantity === 0 && (
-                        <button
+                        <a
                           className="button border-0"
                           type="button"
-                          onClick={() => {
-                            navigate("/cart");
-                          }}
+                          
                         >
                           This product is not available
-                        </button>
+                        </a>
                       )}
                     </div>
                   </div>
@@ -303,7 +301,7 @@ const SingleProduct = () => {
             <div className="col-12">
               <h4>Reviews</h4>
               <div className="review-inner-wrapper">
-                <div className="review-head d-flex justify-content-between align-items-end">
+                {/* <div className="review-head d-flex justify-content-between align-items-end">
                   <div>
                     <h4 className="mb-2">Customer Reviews</h4>
                     <div className="d-flex align-items-center gap-10">
@@ -329,7 +327,7 @@ const SingleProduct = () => {
                       </div>
                     )}
                   </div>
-                </div>
+                </div> */}
                 <div id="review" className="review-form py-4">
                   <h4 className="mb-2">Write A Review</h4>
                   <div className="">
@@ -392,16 +390,7 @@ const SingleProduct = () => {
           </div>
         </div>
       </section>
-      <section className="popular-wrapper  home-wrapper-2">
-        <div className="container-xxl">
-          <div className="row ">
-            <div className="col-12">
-              <h3 className="section-heading">Our Popular Products</h3>
-            </div>
-            <ProductCard />
-          </div>
-        </div>
-      </section>
+
     </>
   );
 };

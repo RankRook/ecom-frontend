@@ -1,23 +1,50 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ReactStars from "react-stars";
-import { useDispatch } from "react-redux";
-import { addToWishlist } from "../features/products/productSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../features/products/productSlice";
+import { getUserProductWishList } from "../features/user/authSlice";
+
 
 const ProductCard = (props) => {
   const { grid, data } = props;
   const dispatch = useDispatch();
   let location = useLocation();
+  const [already, setalready] = useState([]);
+  useEffect(() => {
+    getProductWish();
+  }, []);
+
+  const getProductWish = () => {
+    dispatch(getUserProductWishList());
+  };
+  const wishlistState = useSelector(
+    (state) => state?.auth?.wishlist?.findUser?.wishlist
+  );
+  useEffect(() => {
+    setalready(wishlistState?.map((item) => item._id));
+  }, [wishlistState]);
 
   const addToWish = (id) => {
-    dispatch(addToWishlist(id));
-    console.log(id)
-  };
+    if (already.includes(id)) {
+      dispatch(removeFromWishlist(id));
+      setTimeout(() => {
+        dispatch(getUserProductWishList());
+      }, 100)
+    } else {
+      dispatch(addToWishlist(id));
+      setTimeout(() => {
+        dispatch(getUserProductWishList());
+      }, 100);
+    }
 
-  // if (!Array.isArray(data)) {
-  //   return <p>No product data available.</p>; // You can render an error message or handle it as needed.
-  // }
+    // If the product is not in the wishlist, add it
+  };
+  console.log(wishlistState);
   return (
     <>
       {data &&
@@ -41,22 +68,37 @@ const ProductCard = (props) => {
                   </button>
                 </div>
                 {/* <div className="container"> */}
-                  <div className="product-image ">
-                    <img
-                      width={400}
-                      height={400}
-                      src={item?.images?.[0]?.url}
-                      className="img-fluid mx-auto"
-                      alt="product-image"
-                    />
-                    <img
-                      width={400}
-                      height={400}
-                      src={item?.images?.[1]?.url}
-                      className="img-fluid mx-auto"
-                      alt="product image"
-                    />
-                  </div>
+                <div className="product-image">
+                  {item?.images?.length > 0 && (
+                    <>
+                      <img
+                        width={400}
+                        height={400}
+                        src={item?.images?.[0]?.url}
+                        className="img-fluid mx-auto"
+                        alt="product-image"
+                      />
+                      {item?.images?.length > 1 && (
+                        <img
+                          width={400}
+                          height={400}
+                          src={item?.images?.[1]?.url}
+                          className="img-fluid mx-auto"
+                          alt="product image"
+                        />
+                      )}
+                      {item?.images?.length === 1 && (
+                        <img
+                          width={400}
+                          height={400}
+                          src={item?.images?.[0]?.url}
+                          className="img-fluid mx-auto"
+                          alt="product image"
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
                 {/* </div> */}
 
                 <div className="product-details">
@@ -65,7 +107,7 @@ const ProductCard = (props) => {
                   <ReactStars
                     count={5}
                     size={24}
-                    value={item?.totalRating?.toString()}
+                    value={item?.totalrating?.toString()}
                     edit={false}
                     activeColor="#ffd700"
                   />

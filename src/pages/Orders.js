@@ -6,17 +6,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../features/user/authSlice";
 import Container from "../components/Container";
 import { Link } from "react-router-dom";
+
 const Orders = () => {
   const dispatch = useDispatch();
   const orderState = useSelector((state) => state?.auth?.getOrderedProduct);
   const [shippingInfo, setShippingInfo] = useState([]);
   const [orderNumber, setOrderNumber] = useState(1);
+
   useEffect(() => {
     getUserOrders();
   }, []);
+
   const getUserOrders = () => {
     dispatch(getOrders());
   };
+
   useEffect(() => {
     if (orderState && orderState.length > 0) {
       const newShippingInfo = orderState.map((order) => {
@@ -41,14 +45,14 @@ const Orders = () => {
                   <table class="m-0 table table-sm table-bordered">
                     <thead>
                       <tr class="text-center">
-                        <th class="w-10 bg-danger align-middle">Đơn hàng</th>
-                        <th class="w-15  bg-danger align-middle">Ngày</th>
-                        <th class=" bg-danger align-middle">Địa chỉ </th>
+                        <th class="w-10 bg-danger align-middle">Order</th>
+                        <th class="w-15  bg-danger align-middle">Date</th>
+                        <th class=" bg-danger align-middle">Address </th>
                         <th class="w-20 bg-danger align-middle">
-                          Giá trị đơn hàng{" "}
+                          Order Value{" "}
                         </th>
                         <th class="w-20  bg-danger align-middle">
-                          TT thanh toán
+                          Payment Status
                         </th>
                       </tr>
                     </thead>
@@ -66,7 +70,7 @@ const Orders = () => {
                         </td>
                         <td class="align-middle p-2">{shipInfo}, </td>
                         <td class="align-middle p-2">
-                          {item?.totalPriceAfterDiscount}&nbsp;VND
+                          {item?.totalPriceAfterDiscount}&nbsp;USD
                         </td>
                         <td class="align-middle p-2">
                           <button

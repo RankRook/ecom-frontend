@@ -1,13 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Link, useLoaderData, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { PayPalButton } from "react-paypal-button-v2";
+import { toast } from "react-toastify";
 import { object, string, number, date, InferType } from "yup";
-import { createAnOrder, emptyUserCart, getAUser, resetState } from "../features/user/authSlice";
+import {
+  createAnOrder,
+  emptyUserCart,
+  getAUser,
+  resetState,
+} from "../features/user/authSlice";
 import * as authService from "../features/user/authService";
 const Checkout = () => {
   const shippingSchema = object({
@@ -17,22 +28,37 @@ const Checkout = () => {
     city: string().required("City is required"),
     mobile: number().required("Mobile phone is required"),
     country: string().required("Country is requird"),
+    coupon: string(),
   });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.auth.cartProducts);
-  // const userState = useSelector((state) => state?.auth?.orderedProduct?.order?.shippingInfo);
-  // console.log(userState)
   const [payment, setPayment] = useState("later_money");
   const [sdkReady, setSdkReady] = useState(false);
   const [totalAmount, setTotalAmount] = useState(null);
   const [totalAmountDiscount, setTotalAmountDiscount] = useState(null);
   const [shippingInfo, setShippingInfo] = useState(null);
   const [cartProduct, setCartProduct] = useState(null);
-  const location = useLocation()
+  const location = useLocation();
   const userState = useSelector((state) => state?.auth?.info?.getaUser);
   const getUsertId = location.pathname.split("/")[2];
-  
+  const totalAmountWithShipping = totalAmount !== null ? totalAmount + 5 : 5;
+  const [couponError, setCouponError] = useState(null);
+
+  const base_url = "http://localhost:5000/api/";
+  const getTokenFromLocalStorage = localStorage.getItem("customer")
+    ? JSON.parse(localStorage.getItem("customer"))
+    : null;
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${
+        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
+      }`,
+      Accept: "application/json",
+    },
+  };
+
   useEffect(() => {
     getUser();
   }, []);
@@ -50,17 +76,6 @@ const Checkout = () => {
   }, [cartState]);
 
   useEffect(() => {
-    let sum = 0;
-    for (let index = 0; index < cartState?.length; index++) {
-      sum =
-        sum + Number(cartState[index].quantity) * cartState[index].price + 5;
-
-      setTotalAmountDiscount(sum);
-    }
-  }, [cartState]);
-
-
-  useEffect(() => {
     let items = [];
     for (let index = 0; index < cartState?.length; index++) {
       items.push({
@@ -72,11 +87,32 @@ const Checkout = () => {
     setCartProduct(items);
   }, []);
 
+  const applyCoupon = async () => {
+    try {
+      const coupon = formik.values.coupon;
+      console.log("Coupon:", coupon);
+      const response = await fetch(`${base_url}user/cart/apply-coupon`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...config.headers,
+        },
+        body: JSON.stringify({ coupon: coupon }),
+      });
 
-  console.log(cartProduct);
+      if (!response.ok) {
+        throw new Error("Failed to apply coupon");
+      }
+      const totalAfterDiscount = await response.json();
+      setTotalAmountDiscount(totalAfterDiscount);
+      toast.info("Apply coupon code success")
+    } catch (error) {
+      setCouponError(toast.info("Invalid or expired coupon")); // Set error message
+    }
+  };
+
   const addPaypalScript = async () => {
     const { data } = await authService.getConfig();
-    console.log(data);
     const script = document.createElement("script");
     script.type = "text/javascript";
     script.src = `https://www.paypal.com/sdk/js?client-id=${data}`;
@@ -116,21 +152,22 @@ const Checkout = () => {
     dispatch(
       createAnOrder({
         totalPrice: totalAmount,
-        totalPriceAfterDiscount: totalAmountDiscount,
+        totalPriceAfterDiscount:
+          totalAmountDiscount !== null
+            ? totalAmountDiscount
+            : totalAmountWithShipping,
         orderItems: cartProduct,
         paymentMethod: payment,
         shippingInfo: shippingInfo,
         isPaid: true,
-      }),
+      })
     );
     setTimeout(() => {
       navigate("/my-orders");
-      dispatch(emptyUserCart())
+      dispatch(emptyUserCart());
       dispatch(resetState());
     }, 300);
   };
-
-  console.log(onSuccessPaypal);
 
   return (
     <>
@@ -139,7 +176,7 @@ const Checkout = () => {
           <div className="row">
             <div className="col-7">
               <div className="checkout-left-data">
-                <h3 className="website-name">Hien Dep Trai</h3>
+                <h3 className="website-name">Music Store</h3>
                 <nav
                   style={{ "--bs-breadcrumb-divider": ">" }}
                   aria-label="breadcrumb"
@@ -268,13 +305,23 @@ const Checkout = () => {
                       placeholder="Coupon"
                       className="form-control"
                       name="coupon"
+                      onChange={formik.handleChange("coupon")}
+                      onBlur={formik.handleBlur("coupon")}
                       value={formik.values.coupon}
-                    />                  
+                    />
+                    <div className="errors ">
+                      {formik.touched.mobile && formik.errors.mobile}
+                    </div>
                   </div>
                   <div className="flex-grow-2">
-                  <button className="button" type="submit">
-                        Apply Coupon
-                      </button>
+                    <button
+                      className="button"
+                      type="button"
+                      onClick={applyCoupon}
+                    >
+                      Apply Coupon
+                    </button>
+
                   </div>
 
                   <div className="w-100">
@@ -341,25 +388,44 @@ const Checkout = () => {
                   <p className="mb-0 total">Shipping</p>
                   <p className="mb-0 total-price">$ 5</p>
                 </div>
+                <div className="d-flex justify-content-between align-items-center">
+                  <p className="mb-0 total">Discount</p>
+                  <p className="mb-0 total-price">
+                    {totalAmountDiscount !== null && totalAmountDiscount > 0 ? (
+                      <p className="mb-0 total-price">
+                        ${" "}
+                        {totalAmount ? totalAmount - totalAmountDiscount : "0"}
+                      </p>
+                    ) : null}
+                  </p>
+                </div>
               </div>
               <div className="d-flex justify-content-between align-items-center py-4">
                 <h4 className="total">Total</h4>
                 <h5 className="total-price">
-                  $ {totalAmount ? totalAmount + 5 : "0"}
+                  ${" "}
+                  {totalAmountDiscount !== null && !isNaN(totalAmountDiscount)
+                    ? (parseFloat(totalAmountDiscount) + 5).toFixed(2)
+                    : totalAmountWithShipping.toFixed(2)}
                 </h5>
               </div>
-             { shippingInfo == null ? shippingInfo == null : 
-               <div style={{ width: "320px" }}>
-               <PayPalButton
-                 className="button"
-                 type="submit"
-                 amount={totalAmount}
-                 onSuccess={onSuccessPaypal}
-                 // onError={"Error"}
-                 // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
-               />
-             </div>
-             }
+              {shippingInfo == null ? (
+                shippingInfo == null
+              ) : (
+                <div style={{ width: "320px" }}>
+                  <PayPalButton
+                    className="button"
+                    type="submit"
+                    amount={
+                      totalAmountDiscount !== null &&
+                      !isNaN(totalAmountDiscount)
+                        ? (parseFloat(totalAmountDiscount) + 5).toFixed(2)
+                        : totalAmountWithShipping.toFixed(2)
+                    }
+                    onSuccess={onSuccessPaypal}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

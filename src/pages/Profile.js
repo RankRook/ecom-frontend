@@ -8,10 +8,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAUser, updateUserProf } from "../features/user/authSlice";
 import {FiEdit} from 'react-icons/fi'
 import { useLocation } from "react-router-dom";
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 const profileSchema = yup.object({
   firstname: yup.string().required("First Name is required"),
   lastname: yup.string().required("Last Name is required"),
-  mobile: yup.string().required("Phone number is required"),
+  mobile: yup.string()
+  .required("required")
+  .matches(phoneRegExp, 'Phone number is not valid')
+  .min(10, "too short")
+  .max(10, "too long"),
+
   address: yup.string(),
   city: yup.string(),
   country: yup.string()

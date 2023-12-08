@@ -35,6 +35,17 @@ export const addToWishlist = createAsyncThunk(
   }
 );
 
+export const removeFromWishlist = createAsyncThunk(
+  "product/remove-wishlist",
+  async (prodId, thunkAPI) => {
+    try {
+      return await productService.addToWishlist(prodId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 export const addRating = createAsyncThunk(
   "product/rating",
   async (data, thunkAPI) => {
@@ -75,6 +86,7 @@ export const productSlice = createSlice({
         state.isTrue = false;
         state.isError = true;
       })
+
       .addCase(addToWishlist.pending, (state) => {
         state.isLoading = true;
       })
@@ -83,12 +95,39 @@ export const productSlice = createSlice({
         state.isSuccess = true;
         state.isError = false;
         state.addToWish = action.payload;
+        if (state.isSuccess === true) {
+          toast.info("Add to Wishlist Successfully");
+        }
       })
       .addCase(addToWishlist.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
+        if (state.isSuccess === true) {
+          toast.info("Something Error");
+        }
       })
+      .addCase(removeFromWishlist.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(removeFromWishlist.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.removeToWish = action.payload;
+        if (state.isSuccess === true) {
+          toast.info("Remove from Wishlist Successfully");
+        }
+      })
+      .addCase(removeFromWishlist.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        if (state.isSuccess === true) {
+          toast.info("Something Error");
+        }
+      })
+      
       .addCase(getProduct.pending, (state) => {
         state.isLoading = true;
       })
