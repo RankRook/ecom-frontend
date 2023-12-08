@@ -204,7 +204,7 @@ const SingleProduct = () => {
                             type="number"
                             name=""
                             min={1}
-                            max={10}
+                            max={productState?.quantity}
                             className="form-control"
                             style={{ width: "60px", height: "35px" }}
                             onChange={(e) => setQuantity(e.target.value)}

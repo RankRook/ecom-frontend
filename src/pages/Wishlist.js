@@ -6,7 +6,7 @@ import BreadCrumb from "../components/BreadCrumb";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserProductWishList } from "../features/user/authSlice";
-import { addToWishlist } from "../features/products/productSlice";
+import { removeFromWishlist } from "../features/products/productSlice";
 
 const Wishlist = () => {
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ const Wishlist = () => {
     (state) => state?.auth?.wishlist?.findUser?.wishlist
   );
   const removeFromWishList = (id) => {
-    dispatch(addToWishlist(id));
+    dispatch(removeFromWishlist(id));
     setTimeout(() => {
       getProductWish();
     }, 300);

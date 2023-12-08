@@ -90,11 +90,11 @@ const Header = ({ history }) => {
                   onPaginate={() => console.log("Results paginated")}
                   onChange={(selected) => {
                     navigate(`/product/${selected[0]?.prod}`);
-                    dispatch(getProduct(selected[0]?.prod));
+                    dispatch(getProduct(selected[0]?.prod))
                   }}
                   options={productOpt}
                   labelKey={"name"}
-                  minLength={2}
+                  minLength={10}
                   paginate={paginate}
                   placeholder="Search for Products here..."
                 />

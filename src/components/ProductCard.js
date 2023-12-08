@@ -1,19 +1,50 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ReactStars from "react-stars";
-import { useDispatch } from "react-redux";
-import { addToWishlist } from "../features/products/productSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../features/products/productSlice";
+import { getUserProductWishList } from "../features/user/authSlice";
+
 
 const ProductCard = (props) => {
   const { grid, data } = props;
   const dispatch = useDispatch();
   let location = useLocation();
+  const [already, setalready] = useState([]);
+  useEffect(() => {
+    getProductWish();
+  }, []);
+
+  const getProductWish = () => {
+    dispatch(getUserProductWishList());
+  };
+  const wishlistState = useSelector(
+    (state) => state?.auth?.wishlist?.findUser?.wishlist
+  );
+  useEffect(() => {
+    setalready(wishlistState?.map((item) => item._id));
+  }, [wishlistState]);
 
   const addToWish = (id) => {
-    dispatch(addToWishlist(id));
-    console.log(id);
+    if (already.includes(id)) {
+      dispatch(removeFromWishlist(id));
+      setTimeout(() => {
+        dispatch(getUserProductWishList());
+      }, 100)
+    } else {
+      dispatch(addToWishlist(id));
+      setTimeout(() => {
+        dispatch(getUserProductWishList());
+      }, 100);
+    }
+
+    // If the product is not in the wishlist, add it
   };
+  console.log(wishlistState);
   return (
     <>
       {data &&
@@ -74,12 +105,12 @@ const ProductCard = (props) => {
                   <h6 className="brand">{item?.brand}</h6>
                   <h5 className="product-title">{item?.title}</h5>
                   <ReactStars
-                      count={5}
-                      size={24}
-                      value={item?.totalrating?.toString()}
-                      edit={false}
-                      activeColor="#ffd700"
-                    />
+                    count={5}
+                    size={24}
+                    value={item?.totalrating?.toString()}
+                    edit={false}
+                    activeColor="#ffd700"
+                  />
                   <p
                     className={`description ${
                       grid === 12 ? "d-block" : "d-none"

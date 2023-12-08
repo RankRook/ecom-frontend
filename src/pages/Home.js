@@ -2,7 +2,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Marquee from "react-fast-marquee";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Meta from "../components/Meta";
@@ -10,10 +10,15 @@ import BlogCard from "../components/BlogCard";
 import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
 import ReactStars from "react-stars";
-import { addToWishlist } from "../features/products/productSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBLogs } from "../features/blogs/blogSlice";
 import { getAllProducts } from "../features/products/productSlice";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../features/products/productSlice";
+import { getUserProductWishList } from "../features/user/authSlice";
 
 const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
@@ -37,8 +42,33 @@ const Home = () => {
 
   let location = useLocation();
 
+  const [already, setalready] = useState([]);
+  useEffect(() => {
+    getProductWish();
+  }, []);
+
+  const getProductWish = () => {
+    dispatch(getUserProductWishList());
+  };
+  const wishlistState = useSelector(
+    (state) => state?.auth?.wishlist?.findUser?.wishlist
+  );
+  useEffect(() => {
+    setalready(wishlistState?.map((item) => item._id));
+  }, [wishlistState]);
+
   const addToWish = (id) => {
-    dispatch(addToWishlist(id));
+    if (already.includes(id)) {
+      dispatch(removeFromWishlist(id));
+      setTimeout(() => {
+        dispatch(getUserProductWishList());
+      }, 100);
+    } else {
+      dispatch(addToWishlist(id));
+      setTimeout(() => {
+        dispatch(getUserProductWishList());
+      }, 100);
+    }
   };
 
   return (
