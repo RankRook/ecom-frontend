@@ -24,7 +24,6 @@ const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state.product.product);
   const navigate = useNavigate();
-  console.log(productState);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -58,7 +57,7 @@ const Home = () => {
   }, [wishlistState]);
 
   const addToWish = (id) => {
-    if (already.includes(id)) {
+    if (already?.includes(id)) {
       dispatch(removeFromWishlist(id));
       setTimeout(() => {
         dispatch(getUserProductWishList());
@@ -88,7 +87,7 @@ const Home = () => {
                   <h4>SUPERCHANGED FOR PROS</h4>
                   <h5>Guitars LakeWood</h5>
                   <p></p>
-                  <Link className="button">BUY NOW</Link>
+                  <Link  to={"/product" } className="button">BUY NOW</Link>
                 </div>
               </div>
             </div>
@@ -96,13 +95,14 @@ const Home = () => {
               <div className="d-flex flex-wrap gap-10 justify-content-between align-items">
                 <div className="small-banner position-relative">
                   <img
-                    src="images\guitarbanner1.jpg"
+                    src="images\guitarbanner7.jpg"
                     className="img-fluid rounded-3"
                     alt="main banner"
                   />
                   <div className="small-banner-content position-absolute">
-                    <h4>SUPER DISCOUNT IN THIS EVENT</h4>
+                   
                     <h5>Coupon: SPECIAL</h5> <h5>Discount: 15%</h5>
+                    <h4>Time Expired: 12/20/2023</h4>
                   </div>
                 </div>
                 <div className="small-banner position-relative">
@@ -112,8 +112,9 @@ const Home = () => {
                     alt="main banner"
                   />
                   <div className="small-banner-content position-absolute">
-                    <h4>SUPER DISCOUNT IN THIS EVENT</h4>
+                    
                     <h5>Coupon: HOT007</h5> <h5>Discount: 20%</h5>
+                    <h4>Time Expired: 12/15/2023</h4>
                   </div>
                 </div>
                 <div className="small-banner position-relative">
@@ -123,9 +124,9 @@ const Home = () => {
                     alt="main banner"
                   />
                   <div className="small-banner-content position-absolute">
-                    <h4>SUPER DISCOUNT IN THIS EVENT</h4>
                     <h5>Coupon: FANTASIC</h5>
                     <h5>Discount: 10 %</h5>
+                    <h4>Time Expired: 12/10/2023</h4>
                   </div>
                 </div>
                 <div className="small-banner position-relative">
@@ -135,9 +136,9 @@ const Home = () => {
                     alt="main banner"
                   />
                   <div className="small-banner-content position-absolute">
-                    <h4>SUPER DISCOUNT IN THIS EVENT</h4>
                     <h5>Coupon: WINTER</h5>
                     <h5>Discount: 21 %</h5>
+                    <h4>Time Expired: 12/25/2023</h4>
                   </div>
                 </div>
               </div>
@@ -217,6 +218,7 @@ const Home = () => {
                               <img src="images/wish.svg" alt="wishlist" />
                             </button>
                           </div>
+                          <Link to={"/product/" + item?._id} className="product-card position-relative">
                           <div className="product-image">
                             {item?.images?.length > 0 && (
                               <>
@@ -248,6 +250,8 @@ const Home = () => {
                               </>
                             )}
                           </div>
+                          </Link>
+
                           <div className="product-details">
                             <h6 className="brand">{item?.brand}</h6>
                             <h5 className="product-title">{item?.title}</h5>
@@ -335,6 +339,7 @@ const Home = () => {
                               <img src="images/wish.svg" alt="wishlist" />
                             </button>
                           </div>
+                          <Link to={"/product/" + item?._id} className="product-card position-relative">
                           <div className="product-image">
                             {item?.images?.length > 0 && (
                               <>
@@ -366,6 +371,8 @@ const Home = () => {
                               </>
                             )}
                           </div>
+                          </Link>
+
                           <div className="product-details">
                             <h6 className="brand">{item?.brand}</h6>
                             <h5 className="product-title">{item?.title}</h5>

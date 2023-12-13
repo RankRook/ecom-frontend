@@ -3,7 +3,11 @@
 import React, { useEffect, useState } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import { useDispatch, useSelector } from "react-redux";
-import { getOrder, getOrderDetail } from "../features/user/authSlice";
+import {
+  getOrder,
+  getOrderDetail,
+  updateOrderStatus,
+} from "../features/user/authSlice";
 import Container from "../components/Container";
 import { useLocation } from "react-router-dom";
 
@@ -11,14 +15,40 @@ const OrderDetail = () => {
   const dispatch = useDispatch();
   const [shippingInfo, setShippingInfo] = useState([]);
   const location = useLocation();
-  console.log(location);
   const orderId = location.pathname.split("/")[2];
-
+  const [isCancelClicked, setIsCancelClicked] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   useEffect(() => {
     dispatch(getOrder(orderId));
-  }, []);
+  }, [dispatch, orderId]);
 
   const orderState = useSelector((state) => state?.auth?.getSingleOrdered);
+  const handleCancelOrder = () => {
+    if (
+      orderState?.orderStatus !== "Cancelled" &&
+      orderState?.orderStatus !== "Delivered"
+    ) {
+      setIsConfirmModalOpen(true);
+    }
+  };
+
+  const confirmCancelOrder = async () => {
+    const orderId = orderState?._id;
+    const selectedStatus = "Cancelled";
+    await dispatch(
+      updateOrderStatus({
+        id: orderId,
+        status: selectedStatus,
+      })
+    );
+    setIsCancelClicked(true);
+    setIsConfirmModalOpen(false);
+    dispatch(getOrder(orderId));
+  };
+  const displayDiscount =
+    orderState?.totalPrice - orderState?.totalPriceAfterDiscount === -5
+      ? 0
+      : orderState?.totalPrice - orderState?.totalPriceAfterDiscount;
 
   return (
     <>
@@ -32,14 +62,7 @@ const OrderDetail = () => {
                 Created At: {new Date(orderState?.createdAt).toLocaleString()}{" "}
               </span>
             </div>
-            <div class="d-flex gap-5 mt-3 ">
-              <span>
-                {" "}
-                Payment Status:{" "}
-                <span class="text-danger">
-                  {orderState?.isPaid ? "Complete" : "Pending"}
-                </span>
-              </span>
+            <div class="d-flex justify-content-between mt-md-3">
               <span class="d-flex gap-2">
                 {" "}
                 <span> Order Status: </span>
@@ -50,22 +73,50 @@ const OrderDetail = () => {
                 </span>
               </span>
             </div>
-            <div class="d-flex gap-3 mt-3">
-              <div class="row">
-                <div class="col-12">
-                  <span>SHIPPING ADDRESS</span>
-                  <div class="border px-2 py-2 h-75 d-flex flex-column gap-1 pb-3 fw-light text-size-16">
-                    <span>
-                      Address: {orderState?.shippingInfo?.address},{" "}
-                      {orderState?.shippingInfo?.city},{" "}
-                      {orderState?.shippingInfo?.country}
-                    </span>
-                    <span>
-                      Phone: {orderState?.shippingInfo?.mobile}
-                    </span>
+            <div class="d-flex gap-5 mt-3 ">
+              <span>
+                {" "}
+                Payment Status:{" "}
+                <span class="text-danger">
+                  {orderState?.isPaid ? "Complete" : "Refund"}
+                </span>
+              </span>
+            </div>
+            <div class="d-flex justify-content-between  gap-3 mt-3">
+              <span>
+                <div class="row">
+                  <div class="col-12">
+                    <span>SHIPPING ADDRESS</span>
+                    <div class="border px-2 py-2 h-75 d-flex flex-column gap-1 pb-3 fw-light text-size-16">
+                      <span>
+                        Address: {orderState?.shippingInfo?.address},{" "}
+                        {orderState?.shippingInfo?.city},{" "}
+                        {orderState?.shippingInfo?.country}
+                      </span>
+                      <span>Phone: {orderState?.shippingInfo?.mobile}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </span>
+              <span>
+                <div class="row">
+                  <div
+                    class="button"
+                    onClick={handleCancelOrder}
+                    disabled={
+                      isCancelClicked ||
+                      orderState?.isDelivered ||
+                      orderState?.orderStatus === "Cancelled" 
+                    }
+                  >
+                    {orderState?.orderStatus === "Cancelled"
+                      ? "Order Cancelled"
+                      : orderState?.isDelivered
+                      ? "Cannot Cancel Delivered Order"
+                      : "Cancel Order"}
+                  </div>
+                </div>
+              </span>
             </div>
             <div class="table-order-detail">
               <table class="m-0 table table-sm">
@@ -92,9 +143,7 @@ const OrderDetail = () => {
                                 />
                               </div>
                               <div class="d-flex flex-column align-content-center mt-2 col-10">
-                                <div>
-                                  {item?.product.title}
-                                </div>
+                                <div>{item?.product.title}</div>
                               </div>
                             </div>
                           </div>
@@ -122,7 +171,7 @@ const OrderDetail = () => {
                     </td>
                     <td class="align-middle text-end p-2 " colspan="2">
                       <div class="d-flex flex-column gap-3">
-                        <span>0$</span>
+                        <span>{displayDiscount}$</span>
                         <span>5$ (Home Delivery)</span>
                         <span class="text-danger text-size-20 fw-bold">
                           {orderState?.totalPriceAfterDiscount}$
@@ -136,6 +185,48 @@ const OrderDetail = () => {
           </div>
         </div>
       </Container>
+      <div
+        class={`modal fade${isConfirmModalOpen ? " show" : ""}`}
+        style={{ display: isConfirmModalOpen ? "block" : "none" }}
+      >
+        <div class="modal-dialog modal-confirm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title align-content-center">Are you sure?</h4>
+              <button
+                type="button"
+                class="close"
+                onClick={() => setIsConfirmModalOpen(false)}
+                aria-hidden="true"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>
+                Do you really want to cancel this order? This process cannot be
+                undone.
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-info"
+                onClick={() => setIsConfirmModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                onClick={confirmCancelOrder}
+              >
+                Confirm cancel order
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

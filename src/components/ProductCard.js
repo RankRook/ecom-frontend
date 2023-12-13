@@ -9,7 +9,6 @@ import {
 } from "../features/products/productSlice";
 import { getUserProductWishList } from "../features/user/authSlice";
 
-
 const ProductCard = (props) => {
   const { grid, data } = props;
   const dispatch = useDispatch();
@@ -34,7 +33,7 @@ const ProductCard = (props) => {
       dispatch(removeFromWishlist(id));
       setTimeout(() => {
         dispatch(getUserProductWishList());
-      }, 100)
+      }, 100);
     } else {
       dispatch(addToWishlist(id));
       setTimeout(() => {
@@ -48,7 +47,7 @@ const ProductCard = (props) => {
   return (
     <>
       {data &&
-        data?.map((item, index) => {
+        data.map((item, index) => {
           return (
             <div
               key={index}
@@ -68,37 +67,40 @@ const ProductCard = (props) => {
                   </button>
                 </div>
                 {/* <div className="container"> */}
-                <div className="product-image">
-                  {item?.images?.length > 0 && (
-                    <>
-                      <img
-                        width={400}
-                        height={400}
-                        src={item?.images?.[0]?.url}
-                        className="img-fluid mx-auto"
-                        alt="product-image"
-                      />
-                      {item?.images?.length > 1 && (
-                        <img
-                          width={400}
-                          height={400}
-                          src={item?.images?.[1]?.url}
-                          className="img-fluid mx-auto"
-                          alt="product image"
-                        />
-                      )}
-                      {item?.images?.length === 1 && (
+                <Link to={"/product/" + item?._id} className="product-card position-relative">
+                  <div className="product-image">
+                    {item?.images?.length > 0 && (
+                      <>
                         <img
                           width={400}
                           height={400}
                           src={item?.images?.[0]?.url}
                           className="img-fluid mx-auto"
-                          alt="product image"
+                          alt="product-image"
                         />
-                      )}
-                    </>
-                  )}
-                </div>
+                        {item?.images?.length > 1 && (
+                          <img
+                            width={400}
+                            height={400}
+                            src={item?.images?.[1]?.url}
+                            className="img-fluid mx-auto"
+                            alt="product image"
+                          />
+                        )}
+                        {item?.images?.length === 1 && (
+                          <img
+                            width={400}
+                            height={400}
+                            src={item?.images?.[0]?.url}
+                            className="img-fluid mx-auto"
+                            alt="product image"
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
+                </Link>
+
                 {/* </div> */}
 
                 <div className="product-details">

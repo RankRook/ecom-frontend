@@ -174,6 +174,17 @@ export const logout = createAsyncThunk("user/logout", async (thunkAPI) => {
   }
 });
 
+export const updateOrderStatus = createAsyncThunk(
+  "order/update-order",
+  async (data, thunkAPI) => {
+    try {
+      return await authService.updateOrder(data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const getCustomerfromLocalStorage = localStorage.getItem("customer")
   ? JSON.parse(localStorage.getItem("customer"))
   : null;
@@ -382,7 +393,7 @@ export const authSlice = createSlice({
         state.updatedUser = action.payload;
         if (state.isSuccess === true) {
           state.user = action.payload; 
-          toast.info("Update Profile Successfully");
+         
         }
       })
       .addCase(updateUserProf.rejected, (state, action) => {
@@ -441,6 +452,21 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
         state.message = action.error;
+      }).addCase(updateOrderStatus.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateOrderStatus.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.updateOrder = action.payload;
+        state.message = "success";
+      })
+      .addCase(updateOrderStatus.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        state.isLoading = false;
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.isLoading = false;

@@ -18,15 +18,22 @@ import {
   emptyUserCart,
   getAUser,
   resetState,
+  updateUserProf,
 } from "../features/user/authSlice";
 import * as authService from "../features/user/authService";
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const Checkout = () => {
   const shippingSchema = object({
     firstname: string().required("First name is required"),
     lastname: string().required("Last name should be required"),
     address: string().required("Address is required"),
     city: string().required("City is required"),
-    mobile: number().required("Mobile phone is required"),
+    mobile: string()
+      .required("Mobile phone is required")
+      .matches(phoneRegExp, "Phone number is not valid")
+      .min(10, "too short")
+      .max(10, "too long"),
     country: string().required("Country is requird"),
     coupon: string(),
   });
@@ -44,6 +51,8 @@ const Checkout = () => {
   const getUsertId = location.pathname.split("/")[2];
   const totalAmountWithShipping = totalAmount !== null ? totalAmount + 5 : 5;
   const [couponError, setCouponError] = useState(null);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [isFormDisabled, setIsFormDisabled] = useState(false);
 
   const base_url = "http://localhost:5000/api/";
   const getTokenFromLocalStorage = localStorage.getItem("customer")
@@ -87,10 +96,60 @@ const Checkout = () => {
     setCartProduct(items);
   }, []);
 
+  useEffect(() => {
+    if (!cartState || cartState.length === 0) {
+      navigate("/product");
+    }
+  }, [cartState, navigate]);
+
+  const handleFormDisabled = () => {
+    setIsFormDisabled(true);
+  };
+
+  const handleReset = () => {
+    formik.setValues({
+      ...formik.values,
+      firstname: "",
+      lastname: "",
+      mobile: "",
+      country: "",
+      city: "",
+      address: "",
+    });
+    setIsFormDisabled(false);
+    setShippingInfo(null);
+  };
+  // const applyCoupon = async () => {
+  //   try {
+  //     const coupon = formik.values.coupon;
+  //     console.log("Coupon:", coupon);
+  //     const response = await fetch(`${base_url}user/cart/apply-coupon`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         ...config.headers,
+  //       },
+  //       body: JSON.stringify({ coupon: coupon }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to apply coupon");
+  //     }
+  //     const totalAfterDiscount = await response.json();
+  //     setTotalAmountDiscount(totalAfterDiscount);
+  //     toast.info("Apply coupon code success");
+  //   } catch (error) {
+  //     setCouponError(toast.info("Invalid or expired coupon")); // Set error message
+  //   }
+  // };
+
   const applyCoupon = async () => {
     try {
       const coupon = formik.values.coupon;
-      console.log("Coupon:", coupon);
+      if (userState.usedCoupons && userState.usedCoupons.includes(coupon)) {
+        throw new Error("Coupon has already been used by this user");
+      }
+      console.log(userState.usedCoupons.includes(coupon));
       const response = await fetch(`${base_url}user/cart/apply-coupon`, {
         method: "POST",
         headers: {
@@ -101,13 +160,15 @@ const Checkout = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to apply coupon");
+        throw new Error("Invalid coupon or has used");
       }
-      const totalAfterDiscount = await response.json();
+      const couponData = await response.json();
+      setAppliedCoupon(couponData.validCouponId);
+      const totalAfterDiscount = couponData.totalAfterDiscount;
       setTotalAmountDiscount(totalAfterDiscount);
-      toast.info("Apply coupon code success")
+      toast.info("Apply coupon code success");
     } catch (error) {
-      setCouponError(toast.info("Invalid or expired coupon")); // Set error message
+      setCouponError(toast.info(error.message));
     }
   };
 
@@ -144,29 +205,72 @@ const Checkout = () => {
     validationSchema: shippingSchema,
     onSubmit: (values) => {
       setShippingInfo(values);
+      handleFormDisabled();
     },
   });
   console.log(shippingInfo);
 
-  const onSuccessPaypal = (details, data) => {
-    dispatch(
-      createAnOrder({
-        totalPrice: totalAmount,
-        totalPriceAfterDiscount:
-          totalAmountDiscount !== null
-            ? totalAmountDiscount
-            : totalAmountWithShipping,
-        orderItems: cartProduct,
-        paymentMethod: payment,
-        shippingInfo: shippingInfo,
-        isPaid: true,
-      })
-    );
-    setTimeout(() => {
-      navigate("/my-orders");
-      dispatch(emptyUserCart());
-      dispatch(resetState());
-    }, 300);
+  // const onSuccessPaypal = (details, data) => {
+
+  //   dispatch(
+  //     createAnOrder({
+  //       totalPrice: totalAmount,
+  //       totalPriceAfterDiscount:
+  //         totalAmountDiscount !== null
+  //           ? totalAmountDiscount
+  //           : totalAmountWithShipping,
+  //       orderItems: cartProduct,
+  //       paymentMethod: payment,
+  //       shippingInfo: shippingInfo,
+  //       isPaid: true,
+  //     })
+  //   );
+  //   if (appliedCoupon) {
+  //     dispatch(
+  //       getAUser({
+  //         ...userState,
+  //         usedCoupons: [...userState.usedCoupons, appliedCoupon],
+  //       })
+  //     );
+  //   }
+  //   setTimeout(() => {
+  //     navigate("/my-orders");
+  //     dispatch(emptyUserCart());
+  //     dispatch(resetState());
+  //   }, 300);
+  // };
+  const onSuccessPaypal = async (details, data) => {
+    try {
+      dispatch(
+        createAnOrder({
+          totalPrice: totalAmount,
+          totalPriceAfterDiscount:
+            totalAmountDiscount !== null
+              ? totalAmountDiscount
+              : totalAmountWithShipping,
+          orderItems: cartProduct,
+          paymentMethod: payment,
+          shippingInfo: shippingInfo,
+          isPaid: true,
+        })
+      );
+      if (appliedCoupon) {
+        dispatch(
+          updateUserProf({
+            userId: getUsertId,
+            usedCoupons: appliedCoupon,
+          })
+        );
+      }
+      setTimeout(() => {
+        navigate("/my-orders");
+        dispatch(emptyUserCart());
+        dispatch(resetState());
+      }, 300);
+    } catch (error) {
+      console.error("Error during PayPal success:", error);
+      // Handle errors if necessary
+    }
   };
 
   return (
@@ -203,7 +307,20 @@ const Checkout = () => {
                 </nav>
                 <h4 className="title total">Contact Information</h4>
                 <p className="user-details">Hien (hdhien2002@gmail.com)</p>
-                <h4 className="mb-3">Shipping Address</h4>
+
+                <div className="w-100">
+                  <div className="d-flex justify-content-between align-content-center">
+                    <h4 className="mb-3">Shipping Address</h4>
+                    <button
+                      className="button"
+                      type="button"
+                      onClick={handleReset}
+                    >
+                      Reset shipping address
+                    </button>
+                  </div>
+                </div>
+
                 <form
                   onSubmit={formik.handleSubmit}
                   action=""
@@ -221,7 +338,7 @@ const Checkout = () => {
                       <option value="" selected disabled>
                         Select Country
                       </option>
-                      <option value="Hanoi">Hanoi</option>
+                      <option value="Vietnam">Viet nam</option>
                     </select>
                     <div className="errors ">
                       {formik.touched.country && formik.errors.country}
@@ -236,6 +353,7 @@ const Checkout = () => {
                       value={formik.values.firstname}
                       onChange={formik.handleChange("firstname")}
                       onBlur={formik.handleBlur("firstname")}
+                      disabled={isFormDisabled}
                     />
                     <div className="errors ">
                       {formik.touched.firstname && formik.errors.firstname}
@@ -250,6 +368,7 @@ const Checkout = () => {
                       value={formik.values.lastname}
                       onChange={formik.handleChange("lastname")}
                       onBlur={formik.handleBlur("lastname")}
+                      disabled={isFormDisabled}
                     />
                     <div className="errors">
                       {formik.touched.lastname && formik.errors.lastname}
@@ -265,6 +384,7 @@ const Checkout = () => {
                       value={formik.values.address}
                       onChange={formik.handleChange("address")}
                       onBlur={formik.handleBlur("address")}
+                      disabled={isFormDisabled}
                     />
                     <div className="errors ">
                       {formik.touched.address && formik.errors.address}
@@ -279,6 +399,7 @@ const Checkout = () => {
                       value={formik.values.city}
                       onChange={formik.handleChange("city")}
                       onBlur={formik.handleBlur("city")}
+                      disabled={isFormDisabled}
                     />
                     <div className="errors ">
                       {formik.touched.city && formik.errors.city}
@@ -293,6 +414,7 @@ const Checkout = () => {
                       value={formik.values.mobile}
                       onChange={formik.handleChange("mobile")}
                       onBlur={formik.handleBlur("mobile")}
+                      disabled={isFormDisabled}
                     />
                     <div className="errors ">
                       {formik.touched.mobile && formik.errors.mobile}
@@ -308,10 +430,8 @@ const Checkout = () => {
                       onChange={formik.handleChange("coupon")}
                       onBlur={formik.handleBlur("coupon")}
                       value={formik.values.coupon}
+                      disabled={isFormDisabled}
                     />
-                    <div className="errors ">
-                      {formik.touched.mobile && formik.errors.mobile}
-                    </div>
                   </div>
                   <div className="flex-grow-2">
                     <button
@@ -321,7 +441,6 @@ const Checkout = () => {
                     >
                       Apply Coupon
                     </button>
-
                   </div>
 
                   <div className="w-100">
@@ -331,7 +450,7 @@ const Checkout = () => {
                         Return to Cart
                       </Link>
                       <button className="button" type="submit">
-                        Get information
+                        Apply information
                       </button>
                     </div>
                   </div>

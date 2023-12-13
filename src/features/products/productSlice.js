@@ -157,6 +157,9 @@ export const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
+        if (state.isError === true) {
+          toast.info("Please Order before rating");
+        }
       });
   },
   

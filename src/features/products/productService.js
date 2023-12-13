@@ -2,17 +2,18 @@ import axios from "axios";
 import { base_url, config } from "../../utils/axiosConfig";
 
 const getProducts = async (data) => {
-  const respone = await axios.get(
-    `${base_url}product?${data?.brands ? `brands=${data?.brands}&&` : ""}${
-      data?.tag ? `tags=${data?.tag}&&` : ""
-    }${data?.category ? `category=${data?.category}&&` : ""}${
-      data?.minPrice ? `price[gte]=${data?.minPrice}&&` : ""
-    }${data?.maxPrice ? `price[lte]=${data?.maxPrice}&&` : ""}${
-      data?.sort ? `sort=${data?.sort}&&` : ""
+  const response = await axios.get(
+    `${base_url}product?page=${data?.page || 1}${
+      data?.brands ? `&brands=${data?.brands}` : ""
+    }${data?.tag ? `&tags=${data?.tag}` : ""}${
+      data?.pcategories ? `&pcategories=${data?.pcategories}` : ""
+    }${data?.minPrice ? `&price[gte]=${data?.minPrice}` : ""}${
+      data?.maxPrice ? `&price[lte]=${data?.maxPrice}` : ""}${
+      data?.sort ? `&sort=${data?.sort}` : ""
     }`
   );
-  if (respone.data) {
-    return respone.data;
+  if (response.data) {
+    return response.data;
   }
 };
 

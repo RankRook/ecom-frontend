@@ -8,6 +8,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import { createQuery } from "../features/contact/contactSlice";
+import { toast } from "react-toastify";
 
 
 const contactSchema = yup.object({
@@ -34,7 +35,8 @@ const Contact = () => {
         comment: values.comment,
         mobile: values.mobile
       }))
-      console.log(values)
+      formik.resetForm();
+      toast.info("Send Enquiry Successfully");
     },
   });
   return (

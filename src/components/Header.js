@@ -18,6 +18,7 @@ const Header = ({ history }) => {
   const [productOpt, setProductOpt] = useState([]);
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const productState = useSelector((state) => state?.product?.product);
+
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < cartState?.length; index++) {
@@ -79,7 +80,7 @@ const Header = ({ history }) => {
             <div className="col-2">
               <h2>
                 <Link className="text-white" to="/">
-                  Shop Guitar
+                  Hien Shop
                 </Link>
               </h2>
             </div>
@@ -90,11 +91,11 @@ const Header = ({ history }) => {
                   onPaginate={() => console.log("Results paginated")}
                   onChange={(selected) => {
                     navigate(`/product/${selected[0]?.prod}`);
-                    dispatch(getProduct(selected[0]?.prod))
+                    dispatch(getProduct(selected[0]?.prod));
                   }}
                   options={productOpt}
                   labelKey={"name"}
-                  minLength={10}
+                  minLength={2}
                   paginate={paginate}
                   placeholder="Search for Products here..."
                 />
@@ -174,12 +175,9 @@ const Header = ({ history }) => {
                       <NavLink to="/blogs">Blogs</NavLink>
                       <NavLink to="/contact">Contact</NavLink>
                       {authState?.user === null ? (
-                        <p className="mb-0">                         
-                        </p>
+                        <p className="mb-0"></p>
                       ) : (
-                        <NavLink
-                          to="/my-orders"
-                        >My Order</NavLink>
+                        <NavLink to="/my-orders">My Order</NavLink>
                       )}
                     </div>
                   </div>
