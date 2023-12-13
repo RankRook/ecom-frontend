@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addRating, getProduct } from "../features/products/productSlice";
 import { addProdToCart, getUserCart } from "../features/user/authSlice";
 import { toast } from "react-toastify";
+import { getBrands } from "../features/brand/brandSlice";
+import { getCategorys } from "../features/category/categorySlice";
 
 const SingleProduct = () => {
   const [orderProduct, setorderedProduct] = useState(true);
@@ -36,6 +38,9 @@ const SingleProduct = () => {
   const userState = useSelector((state) => state?.auth.user);
   const fullname = userState?.firstname + " " + userState?.lastname;
 
+  const brandState = useSelector((state) => state.brand.brands);
+  const categoryState = useSelector((state) => state.category.categorys)
+
   useEffect(() => {
     getAProduct(getProductId);
   }, []);
@@ -49,8 +54,13 @@ const SingleProduct = () => {
   });
   const getAProduct = () => {
     dispatch(getProduct(getProductId));
+    dispatch(getBrands())
+    dispatch(getCategorys())
     dispatch(getUserCart());
   };
+
+  const brandTitle = brandState.find((brand) => brand._id === productState?.brands)?.title;
+  const categoryTitle = categoryState.find((category) => category._id === productState?.pcategories)?.title;
 
   const uploadCart = () => {
     dispatch(
@@ -66,6 +76,10 @@ const SingleProduct = () => {
   };
 
   const addRatingToProduct = () => {
+    if (!userState) {
+      navigate("/login");
+      return;
+    }
     if (star === null) {
       toast.error("Please add star rating");
       return false;
@@ -93,45 +107,51 @@ const SingleProduct = () => {
   }, [productState]);
   console.log(currentImage);
 
-  console.log(productState?.images[0]?.url)
+  console.log(productState?.images[0]?.url);
 
   const props = {
     width: 600,
     height: 600,
     zoomWidth: 600,
-    img:  productState?.images[0]?.url || productState?.images[1]?.url || ""
+    img: productState?.images[0]?.url || productState?.images[1]?.url || "",
   };
 
   return (
     <>
-
       <Meta title={"Dynamic Product Name"} />
       <BreadCrumb title={productState?.title} />
       <div className="main-product-wrapper home-wrapper-2 py-5">
         <div className="container-xxl">
           <div className="row">
-            <div className="col-6" >
-              <div className="main-product-image" >
-                <div className="main-product-image-main" style={{width:"500px",height:"500px"}}>
-                <ReactImageMagnify
-                  {...{
-                    smallImage: {
-                      isFluidWidth: true,
-                      width: 1040,
-                      height: 1062,
-                      src: currentImage
-                    },
-                    largeImage: {
-                      src: currentImage,
-                      width: 836,
-                      height: 1100,
-                    },
-                    lensStyle:{backgroundColor:'rgba(0,0,0,.2)'}
+            <div className="col-6">
+              <div className="main-product-image">
+                <div
+                  className="main-product-image-main"
+                  style={{
+                    width: "500px",
+                    height: "500px",
+                    position: "relative",
+                    zIndex: 1, // Set the z-index to make sure it's above other elements
                   }}
-                />
-                {/* <ReactImageZoom {...props} /> */}
+                >
+                  <ReactImageMagnify
+                    {...{
+                      smallImage: {
+                        isFluidWidth: true,
+                        width: 1040,
+                        height: 1062,
+                        src: currentImage,
+                      },
+                      largeImage: {
+                        src: currentImage,
+                        width: 936,
+                        height: 1100,
+                      },
+                      lensStyle: { backgroundColor: "rgba(0,0,0,.2)" },
+                    }}
+                  />
+                  {/* <ReactImageZoom {...props} /> */}
                 </div>
-                
               </div>
               <div className="other-product-images gap-30">
                 <div>
@@ -172,20 +192,20 @@ const SingleProduct = () => {
                 </div>
                 <div className="border-bottom py-3">
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
-                    <h3 className="product-heading">Type: </h3>
-                    <p class="product-data">Hello hello</p>
-                  </div>
-                  <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Brand: </h3>
-                    <p class="product-data">{productState?.brands}</p>
+                    <p class="product-data">{brandTitle}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Category: </h3>
-                    <p class="product-data">{productState?.bcategorie}</p>
+                    <p class="product-data">{categoryTitle}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Tags: </h3>
                     <p class="product-data">{productState?.tags}</p>
+                  </div>
+                  <div className="d-flex gap-10 align-items-center my-2 mb-3">
+                    <h3 className="product-heading">Quantity: </h3>
+                    <p class="product-data">{productState?.quantity}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2 mb-3">
                     <h3 className="product-heading">Available: </h3>
@@ -204,7 +224,7 @@ const SingleProduct = () => {
                             type="number"
                             name=""
                             min={1}
-                            max={productState?.quantity}
+                            max={Math.min(productState?.quantity, 5)}
                             className="form-control"
                             style={{ width: "60px", height: "35px" }}
                             onChange={(e) => setQuantity(e.target.value)}
@@ -233,24 +253,20 @@ const SingleProduct = () => {
                         </button>
                       )}
                       {productState?.quantity === 0 && (
-                        <a
-                          className="button border-0"
-                          type="button"
-                          
-                        >
+                        <a className="button border-0" type="button">
                           This product is not available
                         </a>
                       )}
                     </div>
                   </div>
-                  <div className="d-flex align-items-center gap-15">
+                  {/* <div className="d-flex align-items-center gap-15">
                     <div>
                       <a href="">
                         <AiOutlineHeart className="fs-5 me-2" />
                         Add to WishList
                       </a>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="d-flex gap-10 flex-column my-3">
                     <h3 className="product-heading">Shipping & Returns:</h3>
                     <p class="product-data">
@@ -390,7 +406,6 @@ const SingleProduct = () => {
           </div>
         </div>
       </section>
-
     </>
   );
 };

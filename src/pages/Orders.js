@@ -45,13 +45,13 @@ const Orders = () => {
                   <table class="m-0 table table-sm table-bordered">
                     <thead>
                       <tr class="text-center">
-                        <th class="w-10 bg-danger align-middle">Order</th>
-                        <th class="w-15  bg-danger align-middle">Date</th>
-                        <th class=" bg-danger align-middle">Address </th>
-                        <th class="w-20 bg-danger align-middle">
+                        <th class="w-10 bg-info  align-middle">Order</th>
+                        <th class="w-15  bg-info align-middle">Date</th>
+                        <th class=" bg-info r align-middle">Address </th>
+                        <th class="w-20 bg-info align-middle">
                           Order Value{" "}
                         </th>
-                        <th class="w-20  bg-danger align-middle">
+                        <th class="w-20  bg-info  align-middle">
                           Payment Status
                         </th>
                       </tr>
@@ -78,7 +78,7 @@ const Orders = () => {
                             class=" text-uppercase btn btn-success btn-xs w-10"
                           >
                             <span class="flex-center">
-                              {item?.isPaid ? "Complete" : "Pending"}
+                              {item?.isPaid ? "Complete" : "Refund"}
                             </span>
                           </button>
                         </td>

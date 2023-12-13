@@ -7,45 +7,90 @@ import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../features/products/productSlice";
+import { getBrands } from "../features/brand/brandSlice";
+import { getCategorys } from "../features/category/categorySlice";
 
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
   const productState = useSelector((state) => state?.product?.product);
+  const brandState = useSelector((state) => state.brand.brands);
+  const categoryState = useSelector((state) => state.category.categorys);
+
   const [brand, setBrand] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
 
   //Filter State
   const [brands, setBrands] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [pcategories, setCategory] = useState(null);
   const [tag, setTag] = useState(null);
-  const [minPrice, setMinPrice] = useState(null)
-  const [maxPrice, setMaxPrice] = useState(null)
-  const [sort, setSort] = useState(null)
+  const [minPrice, setMinPrice] = useState(null);
+  const [maxPrice, setMaxPrice] = useState(null);
+  const [sort, setSort] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(3);
+
+  useEffect(() => {
+    dispatch(getBrands());
+    dispatch(getCategorys());
+  }, []);
+  const totalProducts = productState ? productState.length : 0;
   useEffect(() => {
     let newBrand = [];
     let newCategories = [];
     let newTags = [];
     for (let i = 0; i < productState.length; i++) {
       const element = productState[i];
+      // for (let i = 0; i < brandState.length; i++) {
+      //   const brand = brandState[i];
+      //   newBrand.push(brand?._id);
+      // }
+      // for (let k = 0; k < categoryState.length; k++) {
+      //   const categories = categoryState[k];
+      //   newCategories.push(categories?._id);
+      // }
+      newCategories.push(element.pcategories);
       newBrand.push(element.brands);
-      newCategories.push(element.category);
       newTags.push(element.tags);
     }
+
     setCategories(newCategories);
     setTags(newTags);
     setBrand(newBrand);
   }, [productState]);
 
-
   const dispatch = useDispatch();
   useEffect(() => {
     getProducts();
-  }, [sort, tag, brands, category, minPrice, maxPrice]);
+  }, [sort, tag, brands, pcategories, minPrice, maxPrice, currentPage]);
+
   const getProducts = () => {
-    dispatch(getAllProducts({sort, tag, brands, category, minPrice, maxPrice}));
+    dispatch(
+      getAllProducts({
+        sort,
+        tag,
+        brands,
+        pcategories,
+        minPrice,
+        maxPrice,
+        page: currentPage,
+      })
+    );
   };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
   return (
     <>
       <Meta title={"Our Store"} />
@@ -55,16 +100,30 @@ const OurStore = () => {
           <div className="row">
             <div className="col-3">
               <div className="filter-card mb-3">
-                <h3 className="filter-title">Shop By Categories</h3>
+                <h3 className="filter-title">Shop by Categories</h3>
                 <div>
-                  <ul className="ps-0">
+                  <div className="product-tags d-flex flex-wrap align-content-center gap-10">
                     {categories &&
-                      [...new Set(categories)].map((item, index) => (
-                        <li key={index} onClick={() => setCategory(item)}>
-                          {item}
-                        </li>
-                      ))}
-                  </ul>
+                      [...new Set(categories)].map((item, index) => {
+                        const categoryInfo = categoryState.find(
+                          (categoryItem) => categoryItem._id === item
+                        );
+
+                        return (
+                          <span
+                            key={index}
+                            onClick={() =>
+                              setCategory(pcategories === item ? null : item)
+                            }
+                            className={`btn ${
+                              pcategories === item ? "btn-primary" : "btn-light"
+                            } fst-italic py-2 px-3`}
+                          >
+                            {categoryInfo ? categoryInfo.title : ""}
+                          </span>
+                        );
+                      })}
+                  </div>
                 </div>
               </div>
               <div className="filter-card mb-3">
@@ -78,7 +137,7 @@ const OurStore = () => {
                         className="form-control py-1"
                         id="floatingInput"
                         placeholder="From"
-                        onChange={(e)=>setMinPrice(e.target.value)}
+                        onChange={(e) => setMinPrice(e.target.value)}
                       />
                       <label for="floatingInput">From</label>
                     </div>
@@ -88,7 +147,7 @@ const OurStore = () => {
                         className="form-control py-1"
                         id="floatingInput1"
                         placeholder="To"
-                        onChange={(e)=>setMaxPrice(e.target.value)}
+                        onChange={(e) => setMaxPrice(e.target.value)}
                       />
                       <label for="floatingInput1">To</label>
                     </div>
@@ -101,14 +160,22 @@ const OurStore = () => {
                   <div className="product-tags d-flex flex-wrap align-content-center gap-10">
                     {brand &&
                       [...new Set(brand)].map((item, index) => {
+                        const brandInfo = brandState.find(
+                          (brandItem) => brandItem._id === item
+                        );
+
                         return (
                           <span
                             key={index}
-                            onClick={() => setBrands(brands === item ? null : item)}
+                            onClick={() =>
+                              setBrands(brands === item ? null : item)
+                            }
                             // className="badge bg-light text-muted fst-italic py-2 px-3"
-                             className={`btn ${brands === item ? "btn-primary" : "btn-light"} fst-italic py-2 px-3`}
+                            className={`btn ${
+                              brands === item ? "btn-primary" : "btn-light"
+                            } fst-italic py-2 px-3`}
                           >
-                            {item}
+                            {brandInfo ? brandInfo.title : ""}
                           </span>
                         );
                       })}
@@ -126,7 +193,9 @@ const OurStore = () => {
                             key={index}
                             onClick={() => setTag(tag === item ? null : item)}
                             // className="badge bg-light text-muted fst-italic py-2 px-3"
-                            className={`btn ${tag === item ? "btn-primary" : "btn-light"} fst-italic py-2 px-3`}
+                            className={`btn ${
+                              tag === item ? "btn-primary" : "btn-light"
+                            } fst-italic py-2 px-3`}
                           >
                             {item}
                           </span>
@@ -143,7 +212,12 @@ const OurStore = () => {
                     <p className="mb-0 d-block" style={{ width: "100px" }}>
                       Sort By:
                     </p>
-                    <select name="" className="form-control form-select" id="" onChange={(e)=>setSort(e.target.value)}>
+                    <select
+                      name=""
+                      className="form-control form-select"
+                      id=""
+                      onChange={(e) => setSort(e.target.value)}
+                    >
                       <option value="title" selected="selected">
                         Alphabetically, A-Z
                       </option>
@@ -160,12 +234,12 @@ const OurStore = () => {
                         Date, old to new
                       </option>
                       <option value="-created" selected="selected">
-                        Date, new to old 
+                        Date, new to old
                       </option>
                     </select>
                   </div>
                   <div className="d-flex align-items-center gap-10">
-                    <p className="total-products mb-0">21 Products</p>
+                    <p className="total-products mb-0">{totalProducts} Products</p>
                     <div className="d-flex gap-10 align-items-center grid">
                       <img
                         onClick={() => {
@@ -213,6 +287,7 @@ const OurStore = () => {
                   />
                 </div>
               </div>
+             
             </div>
           </div>
         </div>

@@ -13,10 +13,10 @@ const phoneRegExp =
 const signUpSchema = yup.object({
   firstname: yup.string().required("First name is required"),
   lastname: yup.string().required("Last name should be required"),
-  email: yup.string().nullable().email("Email is required"),
+  email: yup.string().nullable().email("Email not valid").required("Email is required"),
   mobile: yup
     .string()
-    .required("required")
+    .required("Mobile phone is required")
     .matches(phoneRegExp, "Phone number is not valid")
     .min(10, "too short")
     .max(10, "too long"),
@@ -41,6 +41,7 @@ function Signup() {
     validationSchema: signUpSchema,
     onSubmit: (values) => {
       dispatch(registerUser(values));
+      navigate("/login");
     },
   });
   useState(() => {
@@ -112,7 +113,7 @@ function Signup() {
                       onChange={formik.handleChange("mobile")}
                       onBlur={formik.handleBlur("mobile")}
                     />
-                    <div Name="error">
+                    <div className="error">
                       {formik.touched.mobile && formik.errors.mobile}
                     </div>
                   </div>

@@ -6,29 +6,32 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { getAUser, updateUserProf } from "../features/user/authSlice";
-import {FiEdit} from 'react-icons/fi'
+import { FiEdit } from "react-icons/fi";
 import { useLocation } from "react-router-dom";
-const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+import { toast } from "react-toastify";
+
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const profileSchema = yup.object({
   firstname: yup.string().required("First Name is required"),
   lastname: yup.string().required("Last Name is required"),
-  mobile: yup.string()
-  .required("required")
-  .matches(phoneRegExp, 'Phone number is not valid')
-  .min(10, "too short")
-  .max(10, "too long"),
+  mobile: yup
+    .string()
+    .required("required")
+    .matches(phoneRegExp, "Phone number is not valid")
+    .min(10, "too short")
+    .max(10, "too long"),
 
   address: yup.string(),
   city: yup.string(),
-  country: yup.string()
+  country: yup.string(),
 });
 const Profile = () => {
   const dispatch = useDispatch();
   const [edit, setEdit] = useState(true);
-  const location = useLocation()
+  const location = useLocation();
   const userState = useSelector((state) => state?.auth?.info?.getaUser);
   const getUsertId = location.pathname.split("/")[2];
-
 
   useEffect(() => {
     getUser();
@@ -52,7 +55,8 @@ const Profile = () => {
     validationSchema: profileSchema,
     onSubmit: (values) => {
       dispatch(updateUserProf(values));
-      setEdit(true)
+      setEdit(true);
+      toast.info("Update Profile Successfully");
     },
   });
   return (
@@ -63,7 +67,7 @@ const Profile = () => {
           <div className="col-12">
             <div className="d-flex justify-content-between align-items-center">
               <h3 className="my-3">Update Profile</h3>
-              <FiEdit className="fs-3" onClick={()=>setEdit(false)}/>
+              <FiEdit className="fs-3" onClick={() => setEdit(false)} />
             </div>
           </div>
           <div className="col-12">
@@ -126,21 +130,24 @@ const Profile = () => {
                 <label htmlFor="ex2" className="form-label">
                   Country
                 </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="country"
+                <select
                   name="country"
                   value={formik.values.country}
                   onChange={formik.handleChange("country")}
                   onBlur={formik.handleBlur("country")}
+                  className="form-control form-select"
+                  id="country"
                   disable={edit}
-                />
-
+                >
+                  <option value="" selected disabled>
+                    Select Country
+                  </option>
+                  <option value="Vietnam">Viet nam</option>
+                </select>
               </div>
               <div className="mb-3">
                 <label htmlFor="ex2" className="form-label">
-                address
+                  address
                 </label>
                 <input
                   type="text"
@@ -152,7 +159,6 @@ const Profile = () => {
                   onBlur={formik.handleBlur("address")}
                   disable={edit}
                 />
-
               </div>
               <div className="mb-3">
                 <label htmlFor="ex2" className="form-label">
